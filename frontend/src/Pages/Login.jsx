@@ -15,28 +15,10 @@ function Login({ goToSignup, onLoginSuccess }) {
   const typedRef = useRef(null)
 
   useEffect(() => {
-    // Try to load typed.js safely
-    const initTyped = async () => {
-      try {
-        const { default: Typed } = await import('typed.js')
-        if (typedRef.current) {
-          const typed = new Typed(typedRef.current, {
-            strings: ['Welcome to MyChat!!'],
-            typeSpeed: 100,
-            backSpeed: 50,
-            loop: false,
-            showCursor: false,
-          })
-          return () => typed.destroy()
-        }
-      } catch (error) {
-        console.log('Typed.js not available, using static text')
-        if (typedRef.current) {
-          typedRef.current.textContent = 'Welcome to MyChat!!'
-        }
-      }
+    // Simple static text instead of typed.js to avoid import issues
+    if (typedRef.current) {
+      typedRef.current.textContent = 'Welcome to MyChat!!'
     }
-    initTyped()
   }, [])
 
   const handleLogin = async (e) => {

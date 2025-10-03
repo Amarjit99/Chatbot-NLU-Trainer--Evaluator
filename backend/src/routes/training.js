@@ -5,6 +5,7 @@ import fs from 'fs-extra';
 import { auth } from '../middleware/auth.js';
 import { convertJsonToYaml, validateTrainingData } from '../utils/jsonToYaml.js';
 import huggingfaceService from '../services/huggingfaceService.js';
+// import analyticsService from '../services/analyticsService.js'; // Temporarily disabled
 
 const router = express.Router();
 
@@ -65,7 +66,24 @@ router.post('/upload-and-train', auth, upload.single('trainingData'), async (req
     await convertJsonToYaml(jsonData, yamlPath);
 
     // Train model using HuggingFace
+    const trainingStartTime = Date.now();
     const trainingResult = await huggingfaceService.trainModel(yamlPath, workspaceId);
+    const trainingDuration = Date.now() - trainingStartTime;
+
+    // Record training session in analytics - Temporarily disabled
+    // const modelInfo = {
+    //   id: trainingResult.modelId,
+    //   name: `Model_${workspaceId}_${Date.now()}`,
+    //   accuracy: 0.85 + Math.random() * 0.15, // Mock accuracy for demo
+    //   f1Score: 0.80 + Math.random() * 0.15,
+    //   precision: 0.82 + Math.random() * 0.15,
+    //   recall: 0.78 + Math.random() * 0.18,
+    //   intents: trainingResult.intents || [],
+    //   trainingExamples: trainingResult.trainingExamples || 0,
+    //   backend: 'HuggingFace'
+    // };
+    
+    // analyticsService.recordTrainingSession(workspaceId, modelInfo, trainingDuration, trainingResult.success);
 
     // Clean up temporary files
     await fs.remove(req.file.path);
@@ -101,7 +119,17 @@ router.post('/predict', auth, async (req, res) => {
       return res.status(400).json({ message: 'text and workspaceId are required' });
     }
 
+    const predictionStartTime = Date.now();
     const prediction = await huggingfaceService.predictIntent(text, workspaceId);
+    const predictionDuration = Date.now() - predictionStartTime;
+
+    // Record prediction in analytics - Temporarily disabled
+    // analyticsService.recordPrediction(
+    //   workspaceId, 
+    //   prediction.modelId || 'unknown', 
+    //   prediction.confidence || 0, 
+    //   predictionDuration
+    // );
 
     res.json({
       message: 'Intent predicted successfully',

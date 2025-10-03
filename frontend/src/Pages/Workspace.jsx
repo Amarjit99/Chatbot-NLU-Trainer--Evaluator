@@ -85,6 +85,9 @@ export default function Workspace({ goToLogin }) {
   // Dashboard tabs
   const [activeTab, setActiveTab] = useState('training')
 
+  // Drag and drop states
+  const [isDragOver, setIsDragOver] = useState(false)
+
   useEffect(() => {
     fetch('/data/utterances.json')
       .then(r => r.json())
@@ -124,24 +127,89 @@ export default function Workspace({ goToLogin }) {
 
   const onSelectFile = (e) => {
     const f = e.target.files?.[0]
-    if (!f) return
+    if (!f) {
+      console.log('No file selected')
+      return
+    }
+    
+    console.log('File selected:', f.name, f.size, f.type)
+    
+    // Validate file type
+    const fileName = f.name.toLowerCase()
+    const supportedTypes = ['.json', '.csv', '.txt', '.tsv', '.jsonl']
+    const isSupported = supportedTypes.some(type => fileName.endsWith(type))
+    
+    if (!isSupported) {
+      alert(`Unsupported file type: ${f.name}\n\nPlease use one of these formats:\n${supportedTypes.join('\n')}`)
+      // Clear the file input
+      e.target.value = ''
+      return
+    }
+    
+    // Validate file size (max 10MB)
+    const maxSize = 10 * 1024 * 1024 // 10MB
+    if (f.size > maxSize) {
+      alert(`File too large: ${(f.size / 1024 / 1024).toFixed(2)}MB\n\nMaximum file size is 10MB`)
+      e.target.value = ''
+      return
+    }
+    
     setFile(f)
+    console.log('Processing file:', f.name)
     const reader = new FileReader()
     reader.onload = () => {
       try {
         const text = String(reader.result || '')
         let parsed = []
-        if (f.name.toLowerCase().endsWith('.json')) {
+        
+        if (fileName.endsWith('.json')) {
           const j = JSON.parse(text)
-          parsed = Array.isArray(j) ? j : (j.data || [])
-        } else if (f.name.toLowerCase().endsWith('.csv')) {
+          parsed = Array.isArray(j) ? j : (j.data || j.examples || j.rasa_nlu_data?.common_examples || [])
+        } else if (fileName.endsWith('.csv')) {
           parsed = parseCsv(text)
+        } else if (fileName.endsWith('.tsv')) {
+          // Tab-separated values
+          const lines = text.split(/\r?\n/).filter(Boolean)
+          if (lines.length === 0) {
+            parsed = []
+          } else {
+            const headers = lines[0].split('\t').map(h => h.trim())
+            parsed = lines.slice(1).map(line => {
+              const parts = line.split('\t')
+              const row = {}
+              headers.forEach((h, i) => row[h] = (parts[i] || '').trim())
+              return row
+            })
+          }
+        } else if (fileName.endsWith('.jsonl')) {
+          // JSON Lines format
+          const lines = text.split(/\r?\n/).filter(line => line.trim())
+          parsed = lines.map(line => JSON.parse(line))
+        } else if (fileName.endsWith('.txt')) {
+          // Simple text format - assume each line is an utterance
+          const lines = text.split(/\r?\n/).filter(line => line.trim())
+          parsed = lines.map((line, index) => ({
+            text: line.trim(),
+            intent: `intent_${index + 1}`,
+            entities: []
+          }))
         }
+        
+        if (!parsed || parsed.length === 0) {
+          alert(`No valid data found in ${f.name}.\n\nPlease check:\n• File is not empty\n• Format matches expected structure\n• JSON files have proper syntax\n• CSV/TSV files have headers`)
+          setFile(null)
+          e.target.value = ''
+          return
+        }
+        
+        console.log('Parsed data:', parsed.length, 'records')
         setData(parsed)
-        alert('Dataset uploaded')
+        alert(`✅ Dataset uploaded successfully!\n\n📊 Loaded ${parsed.length} records from ${f.name}\n📁 File size: ${(f.size / 1024).toFixed(1)} KB`)
       } catch (e) {
-        console.error(e)
-        alert('Failed to parse dataset. Use CSV or JSON array.')
+        console.error('File parsing error:', e)
+        alert(`❌ Failed to parse ${f.name}\n\nError: ${e.message}\n\nPlease check:\n• File format is correct\n• JSON syntax is valid\n• CSV/TSV has proper headers\n• File is not corrupted`)
+        setFile(null)
+        e.target.value = ''
       }
     }
     reader.readAsText(f)
@@ -234,6 +302,37 @@ export default function Workspace({ goToLogin }) {
     setTrainingStatus('')
   }
 
+  // Drag and Drop handlers
+  const handleDragOver = (e) => {
+    e.preventDefault()
+    setIsDragOver(true)
+  }
+
+  const handleDragLeave = (e) => {
+    e.preventDefault()
+    setIsDragOver(false)
+  }
+
+  const handleDrop = (e) => {
+    e.preventDefault()
+    setIsDragOver(false)
+    
+    const files = Array.from(e.dataTransfer.files)
+    if (files.length === 0) {
+      console.log('No files dropped')
+      return
+    }
+    
+    if (files.length > 1) {
+      alert('Please drop only one file at a time')
+      return
+    }
+    
+    console.log('File dropped:', files[0].name)
+    const mockEvent = { target: { files: [files[0]] } }
+    onSelectFile(mockEvent)
+  }
+
   return (
     <div className="ws-root">
       <div className="ws-top">
@@ -319,9 +418,43 @@ export default function Workspace({ goToLogin }) {
           {activeTab === 'training' && (
             <>
               <div className="ws-section-title"><FiUpload /> Dataset Upload</div>
-              <div className="ws-upload">
-                <input type="file" accept=".json" onChange={onSelectFile} />
-                {file && <div className="ws-file">Selected: {file.name}</div>}
+              <div 
+                className={`ws-upload ${isDragOver ? 'drag-over' : ''}`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
+                <div className="upload-area">
+                  <FiUpload size={32} className="upload-icon" />
+                  <h3>Choose a file or drag it here</h3>
+                  <p>Drop your training data file here or click to browse</p>
+                  <input 
+                    type="file" 
+                    accept=".json,.csv,.txt,.tsv,.jsonl" 
+                    onChange={onSelectFile}
+                    className="file-input"
+                    id="file-input"
+                  />
+                  <label htmlFor="file-input" className="upload-button">
+                    <FiUpload size={16} />
+                    Browse Files
+                  </label>
+                </div>
+                
+                <div className="upload-info">
+                  <p><strong>Supported formats:</strong> JSON, CSV, TSV, TXT, JSONL</p>
+                  <p><small>• JSON: Array of objects or Rasa NLU format</small></p>
+                  <p><small>• CSV/TSV: First row as headers (text, intent, entities)</small></p>
+                  <p><small>• TXT: One utterance per line</small></p>
+                  <p><small>• JSONL: One JSON object per line</small></p>
+                </div>
+                
+                {file && (
+                  <div className="ws-file">
+                    <FiCheck size={16} style={{ marginRight: '0.5rem' }} />
+                    <strong>Selected:</strong> {file.name} ({(file.size / 1024).toFixed(1)} KB)
+                  </div>
+                )}
               </div>
               
               <div className="ws-overview">

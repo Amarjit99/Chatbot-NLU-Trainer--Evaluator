@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import './Signup.css'
-import axios from 'axios';
-import Typed from 'typed.js'
+import axios from 'axios'
 import { FiUser, FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi'
 
 // Configure axios defaults
@@ -17,17 +16,28 @@ function Signup({ goToLogin, onSignupSuccess }) {
   const typedRef = useRef(null)
 
   useEffect(() => {
-    const typed = new Typed(typedRef.current, {
-      strings: ['Welcome to MyChat!!'],
-      typeSpeed: 100,
-      backSpeed: 50,
-      loop: false,
-      showCursor: false,
-    })
-
-    return () => {
-      typed.destroy()
+    // Try to load typed.js safely
+    const initTyped = async () => {
+      try {
+        const { default: Typed } = await import('typed.js')
+        if (typedRef.current) {
+          const typed = new Typed(typedRef.current, {
+            strings: ['Welcome to ChatBot NLU Trainer'],
+            typeSpeed: 80,
+            backSpeed: 40,
+            loop: false,
+            showCursor: false,
+          })
+          return () => typed.destroy()
+        }
+      } catch (error) {
+        console.log('Typed.js not available, using static text')
+        if (typedRef.current) {
+          typedRef.current.textContent = 'Welcome to ChatBot NLU Trainer'
+        }
+      }
     }
+    initTyped()
   }, [])
 
   const handleSignup = async (e) => {
@@ -86,10 +96,10 @@ function Signup({ goToLogin, onSignupSuccess }) {
   return (
     <div className="signup-container">
       <div className="website-title">
-        <span ref={typedRef}></span>
+        <span ref={typedRef}>Welcome to ChatBot NLU Trainer</span>
       </div>
-      <h2>Sign Up</h2>
-      <form onSubmit={handleSignup}>
+      <h2>Create Your Account</h2>
+      <form onSubmit={handleSignup} className="auth-form">
         <div className="input-container">
           <span className="input-icon"><FiUser /></span>
           <input 

@@ -15,10 +15,28 @@ function Login({ goToSignup, onLoginSuccess }) {
   const typedRef = useRef(null)
 
   useEffect(() => {
-    // Simple static text instead of typed.js to avoid import issues
-    if (typedRef.current) {
-      typedRef.current.textContent = 'Welcome to MyChat!!'
+    // Try to load typed.js safely
+    const initTyped = async () => {
+      try {
+        const { default: Typed } = await import('typed.js')
+        if (typedRef.current) {
+          const typed = new Typed(typedRef.current, {
+            strings: ['Welcome to ChatBot NLU Trainer'],
+            typeSpeed: 80,
+            backSpeed: 40,
+            loop: false,
+            showCursor: false,
+          })
+          return () => typed.destroy()
+        }
+      } catch (error) {
+        console.log('Typed.js not available, using static text')
+        if (typedRef.current) {
+          typedRef.current.textContent = 'Welcome to ChatBot NLU Trainer'
+        }
+      }
     }
+    initTyped()
   }, [])
 
   const handleLogin = async (e) => {
@@ -70,10 +88,10 @@ function Login({ goToSignup, onLoginSuccess }) {
   return (
     <div className="login-container">
       <div className="website-title">
-        <span>Welcome to MyChat!!</span>
+        <span>Welcome to ChatBot NLU Trainer</span>
       </div>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
+      <h2>Sign In to Your Account</h2>
+      <form onSubmit={handleLogin} className="auth-form">
         <div className="input-container">
           <span className="input-icon"><FiMail /></span>
           <input 

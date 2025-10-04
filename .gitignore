@@ -128,3 +128,11 @@ config/keys.js
 # Backup files
 *.backup
 *.bak
+
+# Docker related files
+docker-compose.yml
+docker-compose.*.yml
+Dockerfile
+Dockerfile.*
+.dockerignore
+.docker/

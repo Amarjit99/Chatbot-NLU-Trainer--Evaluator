@@ -20,6 +20,15 @@ const userSchema = new mongoose.Schema(
     passwordHash: {
       type: String,
       required: true
+    },
+    role: {
+      type: String,
+      enum: ['user', 'admin'],
+      default: 'user'
+    },
+    lastLogin: {
+      type: Date,
+      default: Date.now
     }
   },
   { timestamps: true }

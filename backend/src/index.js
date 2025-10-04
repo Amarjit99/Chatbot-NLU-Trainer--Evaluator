@@ -12,6 +12,7 @@ import modelVersioningRoutes from './routes/modelVersioning.js';
 import entitiesRoutes from './routes/entities.js';
 import multiBackendRoutes from './routes/multiBackend.js';
 import activeLearningRoutes from './routes/activeLearning.js';
+import adminRoutes from './routes/admin.js';
 // import analyticsRoutes from './routes/analytics.js'; // Temporarily disabled
 // import analyticsService from './services/analyticsService.js'; // Temporarily disabled
 
@@ -42,10 +43,23 @@ app.use('/api/model-versioning', modelVersioningRoutes);
 app.use('/api/entities', entitiesRoutes);
 app.use('/api/multi-backend', multiBackendRoutes);
 app.use('/api/active-learning', activeLearningRoutes);
+app.use('/api/admin', adminRoutes);
 // app.use('/api/analytics', analyticsRoutes); // Temporarily disabled
 
-// Health check
-app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
+// Health check endpoint for Docker and monitoring
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'healthy', 
+    ok: true,
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    version: '1.0.0',
+    services: {
+      database: 'connected',
+      server: 'running'
+    }
+  });
+});
 
 // Start server after DB connects
 connectDB()

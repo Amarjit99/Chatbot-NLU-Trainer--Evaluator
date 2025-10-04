@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import axios from 'axios'
 import './workspace.css'
-import { FiPlus, FiFolder, FiUpload, FiCpu, FiCheck, FiBarChart2, FiGitBranch, FiTag, FiTarget } from 'react-icons/fi'
+import { FiPlus, FiFolder, FiUpload, FiCpu, FiCheck, FiBarChart2, FiGitBranch, FiTag, FiTarget, FiSettings } from 'react-icons/fi'
 
 // Phase 2: Multi-Backend Training System Components
 import EvaluationDashboard from './EvaluationDashboard'
@@ -12,6 +12,8 @@ import MultiBackendTraining from './MultiBackendTraining' // PHASE 2 MAIN COMPON
 // Phase 3: Active Learning Component
 import ActiveLearningDashboard from './ActiveLearningDashboard' // PHASE 3 MAIN COMPONENT
 
+// Phase 4: Admin Dashboard Component
+import AdminDashboard from './AdminDashboard' // SAFE VERSION - FIXED FOR STABILITY
 
 
 
@@ -412,6 +414,12 @@ export default function Workspace({ goToLogin }) {
             >
               <FiGitBranch /> Versioning
             </button>
+            <button 
+              className={`ws-tab ${activeTab === 'admin' ? 'active' : ''}`}
+              onClick={() => setActiveTab('admin')}
+            >
+              <FiSettings /> Admin
+            </button>
           </div>
 
           {/* Tab Content */}
@@ -603,6 +611,14 @@ export default function Workspace({ goToLogin }) {
               }}
             />
           )}
+
+          {activeTab === 'admin' && (
+            <AdminDashboard 
+              workspaceId={selectedWorkspace?.id}
+            />
+          )}
+
+
         </div>
       </div>
     </div>

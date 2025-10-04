@@ -40,15 +40,45 @@ A cutting-edge full-stack chatbot application with multi-backend AI-powered inte
 
 ## 📋 Prerequisites
 
-### Required
+### For Development
 - Node.js (v18 or higher recommended)
 - npm or yarn package manager
 - MongoDB Atlas account (or local MongoDB instance)
+
+### For Production Deployment
+- **Docker & Docker Compose** (recommended for production)
+- **OR** Node.js 18+ and manual setup
 
 ### Backend Services (Choose one or more)
 - **HuggingFace**: Account with API key for transformer models
 - **Rasa Open Source**: Docker installation for local Rasa server
 - **spaCy**: Python environment with spaCy models installed
+
+## 🚀 Quick Start (Production Deployment)
+
+### 1. Clone Repository
+```bash
+git clone <repository-url>
+cd "Chatbot NLU Trainer"
+```
+
+### 2. Configure Environment
+```bash
+cp .env.example .env
+# Edit .env with your production settings
+```
+
+### 3. Deploy with Docker
+```bash
+docker-compose up -d
+```
+
+### 4. Access Application
+- **Frontend**: http://localhost
+- **Backend API**: http://localhost:3001
+- **Health Check**: http://localhost:3001/api/health
+
+> **See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed deployment instructions**
 
 ### Development Environment
 - Modern web browser (Chrome, Firefox, Safari, Edge)

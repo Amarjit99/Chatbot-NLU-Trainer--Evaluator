@@ -1,24 +1,45 @@
-# 🤖 NLU Chatbot - Complete User Guide
+# 📚 **Advanced Multi-Backend NLU Chatbot Trainer - Complete User Guide**
 
-Welcome to your comprehensive NLU Chatbot application! This guide will walk you through every feature and how to use them effectively.
+<div align="center">
 
-## 📋 Table of Contents
+**Master every feature of the most advanced NLU training platform**
 
-1. [Getting Started](#getting-started)
-2. [Authentication Features](#authentication-features)
-3. [Workspace Management](#workspace-management)
-4. [Training Tab Features](#training-tab-features)
-5. [Evaluation Tab Features](#evaluation-tab-features)
-6. [Versioning Tab Features](#versioning-tab-features)
-7. [Advanced Features](#advanced-features)
-8. [Troubleshooting](#troubleshooting)
+[![Feature Complete](https://img.shields.io/badge/Features-100%25%20Complete-green.svg)](https://github.com/Amarjit99/advanced-multi-backend-nlu-chatbot)
+[![Multi-Backend](https://img.shields.io/badge/Backends-HuggingFace%20%7C%20Rasa%20%7C%20spaCy-blue.svg)](https://github.com/Amarjit99/advanced-multi-backend-nlu-chatbot)
+[![User Friendly](https://img.shields.io/badge/Experience-User%20Friendly-brightgreen.svg)](https://github.com/Amarjit99/advanced-multi-backend-nlu-chatbot)
+
+</div>
+
+Welcome to the most comprehensive NLU training platform! This guide covers all features, from basic setup to advanced AI model management.
 
 ---
 
-## 🚀 Getting Started
+## 📋 **Complete Feature Overview**
 
-### Step 1: Start Your Application
-1. **Open Terminal 1** - Start Backend:
+| Feature Category | Components | Status |
+|------------------|------------|--------|
+| **🔐 Authentication** | Registration, Login, Profile Management | ✅ Complete |
+| **🏢 Workspace Management** | Multi-workspace, Organization, Settings | ✅ Complete |
+| **🤖 Multi-Backend Training** | HuggingFace, Rasa, spaCy Integration | ✅ Complete |
+| **📊 Model Evaluation** | Performance Metrics, Visualization | ✅ Complete |
+| **🔄 Version Control** | Model Versioning, Comparison, Rollback | ✅ Complete |
+| **🎯 Active Learning** | Uncertainty Sampling, Feedback Loop | ✅ Complete |
+| **🏷️ Entity Recognition** | NER Training, Annotation Interface | ✅ Complete |
+| **📈 Analytics Dashboard** | Performance Monitoring, Reports | ✅ Complete |
+| **👤 Admin Panel** | User Management, System Monitoring | ✅ Complete |
+
+---
+
+## 🚀 **Getting Started**
+
+### Prerequisites Check
+Before diving in, ensure you have:
+- ✅ Application running (Backend: Port 3001, Frontend: Port 5173)
+- ✅ MongoDB connection established
+- ✅ At least one AI backend configured (HuggingFace recommended)
+- ✅ Sample training data ready
+
+### Step 1: Launch Your Application
    ```bash
    cd backend
    npm run dev

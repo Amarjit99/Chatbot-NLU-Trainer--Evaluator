@@ -1,24 +1,48 @@
-# 🚀 NLU Chatbot - Quick Start Guide
+# ⚡ **Advanced Multi-Backend NLU Chatbot Trainer - Quick Start Guide**
 
-## ⚡ 5-Minute Setup
+<div align="center">
 
-### 1. Start the Application
-```bash
-# Terminal 1 - Backend
-cd backend
-npm run dev
+**Get up and running in under 5 minutes!**
 
-# Terminal 2 - Frontend  
-cd frontend
-npm run dev
-```
+[![Quick Setup](https://img.shields.io/badge/Setup-5%20Minutes-green.svg)](https://github.com/Amarjit99/advanced-multi-backend-nlu-chatbot)
+[![Beginner Friendly](https://img.shields.io/badge/Level-Beginner%20Friendly-brightgreen.svg)](https://github.com/Amarjit99/advanced-multi-backend-nlu-chatbot)
 
-### 2. Open Browser
-Go to: `http://localhost:5174` (or check terminal output for the correct port)
+</div>
 
 ---
 
-## 🎯 Essential Workflow
+## 🚀 **Super Quick Start (5 Minutes)**
+
+### Step 1: Clone & Setup
+```bash
+git clone https://github.com/Amarjit99/advanced-multi-backend-nlu-chatbot.git
+cd advanced-multi-backend-nlu-chatbot
+cp .env.example .env
+```
+
+### Step 2: Install Dependencies
+```bash
+# Install all dependencies at once
+npm run install:all
+```
+
+### Step 3: Start Application
+```bash
+# Terminal 1 - Backend Server
+cd backend && npm run dev
+
+# Terminal 2 - Frontend Server (new terminal)
+cd frontend && npm run dev
+```
+
+### Step 4: Access Application
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:3001
+- **Health Check**: http://localhost:3001/api/health
+
+---
+
+## 🎯 **Essential First Steps**
 
 ### Step 1: Create Account & Workspace
 1. **Sign Up** → Enter username, email, password

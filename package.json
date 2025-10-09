@@ -1,0 +1,94 @@
+{
+  "name": "chatbotnlu-trainer",
+  "version": "1.0.0",
+  "description": "Advanced Multi-Backend NLU Chatbot Trainer - A comprehensive full-stack AI training platform with multi-backend Natural Language Understanding support",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Amarjit99/advanced-multi-backend-nlu-chatbot.git"
+  },
+  "keywords": [
+    "nlu",
+    "chatbot",
+    "machine-learning",
+    "artificial-intelligence",
+    "natural-language-processing",
+    "huggingface",
+    "rasa",
+    "spacy",
+    "multi-backend",
+    "training-platform",
+    "react",
+    "nodejs",
+    "mongodb",
+    "docker",
+    "ai-training",
+    "intent-classification",
+    "entity-recognition",
+    "active-learning",
+    "model-evaluation",
+    "conversational-ai"
+  ],
+  "author": {
+    "name": "Amarjit99",
+    "url": "https://github.com/Amarjit99"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Amarjit99/advanced-multi-backend-nlu-chatbot/issues"
+  },
+  "homepage": "https://github.com/Amarjit99/advanced-multi-backend-nlu-chatbot#readme",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "scripts": {
+    "dev": "concurrently \"npm run backend:dev\" \"npm run frontend:dev\"",
+    "start": "npm run backend:start",
+    "backend:dev": "cd backend && npm run dev",
+    "backend:start": "cd backend && npm start",
+    "backend:install": "cd backend && npm install",
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "frontend:preview": "cd frontend && npm run preview",
+    "frontend:install": "cd frontend && npm install",
+    "install:all": "npm run backend:install && npm run frontend:install",
+    "build": "npm run frontend:build",
+    "test": "npm run backend:test && npm run frontend:test",
+    "backend:test": "cd backend && npm test",
+    "frontend:test": "cd frontend && npm test",
+    "lint": "npm run backend:lint && npm run frontend:lint",
+    "backend:lint": "cd backend && npm run lint",
+    "frontend:lint": "cd frontend && npm run lint",
+    "clean": "rimraf node_modules backend/node_modules frontend/node_modules backend/uploads/*",
+    "setup": "npm run install:all && npm run backend:setup",
+    "backend:setup": "cd backend && mkdir -p uploads logs",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "prod:deploy": "npm run build && npm run docker:build && npm run docker:up"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "rimraf": "^5.0.5"
+  },
+  "contributors": [
+    {
+      "name": "Amarjit99",
+      "url": "https://github.com/Amarjit99"
+    }
+  ],
+  "config": {
+    "directories": {
+      "backend": "./backend",
+      "frontend": "./frontend",
+      "uploads": "./backend/uploads",
+      "logs": "./backend/logs"
+    }
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/Amarjit99"
+  }
+}

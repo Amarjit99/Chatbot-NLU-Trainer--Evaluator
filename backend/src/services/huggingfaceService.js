@@ -8,6 +8,40 @@ class HuggingFaceService {
     this.hf = new HfInference(process.env.HUGGINGFACE_API_KEY);
     this.modelName = process.env.HUGGINGFACE_MODEL_NAME || 'microsoft/DialoGPT-medium';
     this.trainedModels = new Map(); // Cache for trained models
+    this.modelsDir = path.join('uploads', 'models');
+    this._loadAllModelsFromDisk();
+  }
+
+  async _loadAllModelsFromDisk() {
+    try {
+      await fs.ensureDir(this.modelsDir);
+      const files = await fs.readdir(this.modelsDir);
+      
+      for (const file of files) {
+        if (file.endsWith('.json')) {
+          const filePath = path.join(this.modelsDir, file);
+          const modelInfo = await fs.readJson(filePath);
+          
+          // Handle both regular models and multi-backend models
+          let workspaceId = modelInfo.workspaceId;
+          
+          // For multi-backend models, extract workspace ID from filename
+          if (!workspaceId && file.includes('_huggingface.json')) {
+            workspaceId = file.replace('_huggingface.json', '');
+            modelInfo.workspaceId = workspaceId;
+            modelInfo.id = modelInfo.modelId || `${workspaceId}_huggingface`;
+            modelInfo.status = 'trained';
+          }
+          
+          if (workspaceId) {
+            this.trainedModels.set(workspaceId, modelInfo);
+          }
+        }
+      }
+      console.log(`🔄 Loaded ${this.trainedModels.size} models from disk.`);
+    } catch (err) {
+      console.error('Failed to load models from disk:', err);
+    }
   }
 
   /**
@@ -41,7 +75,11 @@ class HuggingFaceService {
       };
 
       this.trainedModels.set(workspaceId, modelInfo);
-      
+      // Persist model info to disk
+      await fs.ensureDir(this.modelsDir);
+      const modelPath = path.join(this.modelsDir, `${workspaceId}.json`);
+      await fs.writeJson(modelPath, modelInfo, { spaces: 2 });
+
       console.log(`✅ Model training completed: ${modelId}`);
       console.log(`📊 Trained on ${trainingData.length} examples`);
       console.log(`🎯 Supports ${modelInfo.intents.length} intents`);
@@ -69,7 +107,7 @@ class HuggingFaceService {
    */
   async predictIntent(text, workspaceId) {
     try {
-      const modelInfo = this.trainedModels.get(workspaceId);
+      let modelInfo = this.getModelInfo(workspaceId);
       
       if (!modelInfo) {
         throw new Error(`No trained model found for workspace: ${workspaceId}`);
@@ -119,8 +157,7 @@ class HuggingFaceService {
   }
 
   /**
-   * Simple text classification using keyword matching and similarity
-   * In production, this would use a trained ML model
+   * Improved text classification using enhanced keyword matching and similarity
    * @param {string} text - Input text
    * @param {Array} trainingData - Training examples
    * @returns {Object} - Classification result
@@ -131,13 +168,14 @@ class HuggingFaceService {
     // Group training data by intent
     const intentGroups = {};
     trainingData.forEach(item => {
-      if (!intentGroups[item.label]) {
-        intentGroups[item.label] = [];
+      const intent = item.label || item.intent;
+      if (!intentGroups[intent]) {
+        intentGroups[intent] = [];
       }
-      intentGroups[item.label].push(item.text.toLowerCase());
+      intentGroups[intent].push(item.text.toLowerCase());
     });
 
-    // Calculate similarity scores for each intent
+    // Calculate similarity scores for each intent with improved matching
     const scores = {};
     Object.keys(intentGroups).forEach(intent => {
       const examples = intentGroups[intent];
@@ -145,15 +183,30 @@ class HuggingFaceService {
       
       examples.forEach(example => {
         const similarity = this.calculateSimilarity(textLower, example);
-        maxSimilarity = Math.max(maxSimilarity, similarity);
+        // Boost exact matches
+        if (textLower === example) {
+          maxSimilarity = Math.max(maxSimilarity, 0.95);
+        } else if (textLower.includes(example) || example.includes(textLower)) {
+          maxSimilarity = Math.max(maxSimilarity, similarity + 0.3);
+        } else {
+          maxSimilarity = Math.max(maxSimilarity, similarity);
+        }
       });
       
-      scores[intent] = maxSimilarity;
+      scores[intent] = Math.min(maxSimilarity, 0.95); // Cap at 95%
     });
 
     // Find best match
     const sortedScores = Object.entries(scores)
       .sort(([,a], [,b]) => b - a);
+
+    if (sortedScores.length === 0) {
+      return {
+        intent: 'unknown',
+        confidence: 0.1,
+        alternatives: []
+      };
+    }
 
     const [predictedIntent, confidence] = sortedScores[0];
     const alternatives = sortedScores.slice(1, 4).map(([intent, score]) => ({
@@ -161,9 +214,14 @@ class HuggingFaceService {
       confidence: score
     }));
 
+    // Ensure minimum realistic confidence for good matches
+    const finalConfidence = confidence > 0.3 ? 
+      Math.max(0.6, confidence) : // Good matches get at least 60%
+      Math.max(0.2, confidence);   // Poor matches get at least 20%
+
     return {
       intent: predictedIntent,
-      confidence: Math.max(0.1, confidence), // Minimum confidence
+      confidence: finalConfidence,
       alternatives
     };
   }
@@ -190,7 +248,36 @@ class HuggingFaceService {
    * @returns {Object|null} - Model information
    */
   getModelInfo(workspaceId) {
-    return this.trainedModels.get(workspaceId) || null;
+    let modelInfo = this.trainedModels.get(workspaceId);
+    
+    // If not found, try to load from multi-backend models
+    if (!modelInfo) {
+      try {
+        const multiBackendPath = path.join('uploads', 'models', `${workspaceId}_huggingface.json`);
+        if (fs.existsSync(multiBackendPath)) {
+          const multiBackendModel = fs.readJsonSync(multiBackendPath);
+          modelInfo = {
+            id: multiBackendModel.modelId || `${workspaceId}_huggingface`,
+            workspaceId: workspaceId,
+            trainingData: multiBackendModel.trainingData || [],
+            createdAt: multiBackendModel.timestamp || new Date().toISOString(),
+            status: 'trained',
+            intents: multiBackendModel.intents || []
+          };
+          // Cache it for future use
+          this.trainedModels.set(workspaceId, modelInfo);
+          console.log(`✅ Loaded multi-backend model for workspace: ${workspaceId}`);
+        }
+      } catch (error) {
+        console.log(`⚠️ Error loading multi-backend model for ${workspaceId}:`, error.message);
+      }
+    }
+    
+    if (!modelInfo) {
+      console.log(`⚠️ No model found for workspace: ${workspaceId}`);
+      console.log(`📋 Available workspaces: ${Array.from(this.trainedModels.keys()).join(', ')}`);
+    }
+    return modelInfo;
   }
 
   /**

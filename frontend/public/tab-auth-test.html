@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab-Specific Authentication Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .login-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input, button {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .user-info {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #007bff;
+        }
+        .admin-info {
+            background: #fff2e7;
+            border-left: 4px solid #ff6b35;
+        }
+        .error {
+            background: #ffe7e7;
+            border-left: 4px solid #ff3535;
+        }
+        .success {
+            background: #e7ffe7;
+            border-left: 4px solid #35ff35;
+        }
+        .tab-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        .storage-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="tab-indicator">Tab ID: <span id="tabId"></span></div>
+    
+    <div class="container">
+        <h1>🧪 Tab-Specific Authentication Test</h1>
+        <p>This page demonstrates how different users can be logged in on different browser tabs.</p>
+        
+        <div class="container">
+            <h3>Quick Login Options:</h3>
+            <button onclick="loginAs('test1@example.com', 'password123')">Login as Regular User</button>
+            <button onclick="loginAs('admin@example.com', 'admin123')">Login as Admin</button>
+            <button onclick="logout()">Logout</button>
+            <button onclick="checkProfile()">Check Current Profile</button>
+        </div>
+
+        <div class="container">
+            <h3>Manual Login:</h3>
+            <div class="login-form">
+                <input type="email" id="email" placeholder="Email" value="">
+                <input type="password" id="password" placeholder="Password" value="">
+                <button onclick="manualLogin()">Login</button>
+            </div>
+        </div>
+
+        <div id="result" class="container" style="display: none;">
+            <h3>Current User Profile:</h3>
+            <div id="profileInfo"></div>
+            <div class="storage-info">
+                <strong>Storage Info:</strong><br>
+                SessionStorage Token: <span id="sessionToken">None</span><br>
+                LocalStorage Token: <span id="localToken">None</span>
+            </div>
+        </div>
+
+        <div class="container">
+            <h3>📋 Instructions:</h3>
+            <ol>
+                <li><strong>Open this page in multiple tabs</strong></li>
+                <li><strong>Tab 1:</strong> Click "Login as Regular User"</li>
+                <li><strong>Tab 2:</strong> Click "Login as Admin"</li>
+                <li><strong>Switch between tabs</strong> and click "Check Current Profile"</li>
+                <li><strong>Each tab should show different user profiles!</strong></li>
+                <li><strong>Refresh tabs</strong> - they should maintain their respective users</li>
+            </ol>
+            
+            <h3>🎯 Expected Results:</h3>
+            <ul>
+                <li>Tab 1: Shows regular user (blue background)</li>
+                <li>Tab 2: Shows admin user (orange background)</li>
+                <li>Both profiles remain separate even after refresh</li>
+                <li>SessionStorage tokens are different per tab</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Generate unique tab ID
+        const tabId = Math.random().toString(36).substr(2, 9);
+        document.getElementById('tabId').textContent = tabId;
+
+        async function loginAs(email, password) {
+            try {
+                console.log(`Tab ${tabId}: Logging in as ${email}...`);
+                
+                const response = await fetch('http://localhost:3001/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Store token in sessionStorage (tab-specific) and localStorage (fallback)
+                    sessionStorage.setItem('authToken', data.token);
+                    localStorage.setItem('authToken', data.token);
+                    
+                    showProfile(data.user);
+                    updateStorageInfo();
+                    
+                    showMessage(`✅ Logged in as ${data.user.username}!`, 'success');
+                } else {
+                    showMessage(`❌ Login failed: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showMessage(`❌ Error: ${error.message}`, 'error');
+                console.error('Login error:', error);
+            }
+        }
+
+        async function manualLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showMessage('❌ Please enter email and password', 'error');
+                return;
+            }
+            
+            await loginAs(email, password);
+        }
+
+        async function checkProfile() {
+            try {
+                // Check sessionStorage first (tab-specific), then localStorage
+                const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
+                
+                if (!token) {
+                    showMessage('❌ No authentication token found. Please login first.', 'error');
+                    document.getElementById('result').style.display = 'none';
+                    return;
+                }
+
+                console.log(`Tab ${tabId}: Checking profile...`);
+                
+                const response = await fetch('http://localhost:3001/api/auth/me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showProfile(data.user);
+                    updateStorageInfo();
+                    showMessage(`✅ Profile loaded for ${data.user.username}`, 'success');
+                } else {
+                    showMessage(`❌ Failed to fetch profile: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showMessage(`❌ Error: ${error.message}`, 'error');
+                console.error('Profile check error:', error);
+            }
+        }
+
+        function showProfile(user) {
+            const profileDiv = document.getElementById('profileInfo');
+            const isAdmin = user.role === 'admin';
+            
+            profileDiv.innerHTML = `
+                <div class="${isAdmin ? 'admin-info' : 'user-info'}">
+                    <h4>${isAdmin ? '👑' : '👤'} ${user.username || user.name}</h4>
+                    <p><strong>Email:</strong> ${user.email}</p>
+                    <p><strong>Role:</strong> ${user.role.toUpperCase()}</p>
+                    <p><strong>Tab ID:</strong> ${tabId}</p>
+                    ${user.createdAt ? `<p><strong>Member Since:</strong> ${new Date(user.createdAt).toLocaleDateString()}</p>` : ''}
+                </div>
+            `;
+            
+            document.getElementById('result').style.display = 'block';
+        }
+
+        function updateStorageInfo() {
+            const sessionToken = sessionStorage.getItem('authToken');
+            const localToken = localStorage.getItem('authToken');
+            
+            document.getElementById('sessionToken').textContent = 
+                sessionToken ? sessionToken.substring(0, 20) + '...' : 'None';
+            document.getElementById('localToken').textContent = 
+                localToken ? localToken.substring(0, 20) + '...' : 'None';
+        }
+
+        function logout() {
+            sessionStorage.removeItem('authToken');
+            localStorage.removeItem('authToken');
+            document.getElementById('result').style.display = 'none';
+            updateStorageInfo();
+            showMessage('✅ Logged out successfully', 'success');
+            console.log(`Tab ${tabId}: Logged out`);
+        }
+
+        function showMessage(message, type) {
+            // Remove existing messages
+            const existingMessages = document.querySelectorAll('.message');
+            existingMessages.forEach(msg => msg.remove());
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `container message ${type}`;
+            messageDiv.textContent = message;
+            document.body.insertBefore(messageDiv, document.body.firstChild.nextSibling);
+            
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+
+        // Initialize storage info display
+        updateStorageInfo();
+        
+        // Auto-check profile on page load
+        window.addEventListener('load', () => {
+            const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
+            if (token) {
+                checkProfile();
+            }
+        });
+
+        console.log(`Tab ${tabId}: Page loaded`);
+    </script>
+</body>
+</html>

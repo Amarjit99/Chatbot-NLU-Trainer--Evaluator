@@ -29,6 +29,15 @@ const userSchema = new mongoose.Schema(
     lastLogin: {
       type: Date,
       default: Date.now
+    },
+    bio: {
+      type: String,
+      default: '',
+      maxlength: 500
+    },
+    avatar: {
+      type: String,
+      default: null
     }
   },
   { timestamps: true }

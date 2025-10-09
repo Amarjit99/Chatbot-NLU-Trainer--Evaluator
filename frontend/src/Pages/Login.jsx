@@ -12,6 +12,11 @@ function Login({ goToSignup, onLoginSuccess }) {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Debug logging for state changes
+  React.useEffect(() => {
+    console.log('🔍 Login state:', { email, passwordLength: password.length });
+  }, [email, password]);
   const typedRef = useRef(null)
 
   useEffect(() => {
@@ -42,26 +47,42 @@ function Login({ goToSignup, onLoginSuccess }) {
   const handleLogin = async (e) => {
     e.preventDefault()
     if (isSubmitting) return
+    
+    // Basic validation
+    if (!email.trim() || !password.trim()) {
+      alert('Please fill in both email and password')
+      return
+    }
+    
     setIsSubmitting(true)
     try {
-      console.log('Attempting login with:', { email })
-      console.log('Sending request to:', 'http://localhost:3001/api/auth/login')
+      console.log('🔐 Attempting login with:', { email, passwordLength: password.length })
+      console.log('📡 Sending request to:', 'http://localhost:3001/api/auth/login')
+      
       const res = await axios.post('http://localhost:3001/api/auth/login', {
-        email: email,
+        email: email.trim(),
         password: password,
       }, {
         headers: {
           'Content-Type': 'application/json'
         },
         withCredentials: true,
-        timeout: 10000
+        timeout: 15000
       })
-      console.log('Login response:', res.data)
-      if (res.status === 200) {
-        alert('Login successful')
-        const token = res?.data?.token
-        if (token) localStorage.setItem('auth_token', token)
-        if (typeof onLoginSuccess === 'function') onLoginSuccess()
+      
+      console.log('✅ Login response:', res.data)
+      if (res.status === 200 && res.data.token) {
+        alert(`Welcome back, ${res.data.user.username}!`)
+        // Store token in sessionStorage for tab-specific authentication
+        sessionStorage.setItem('authToken', res.data.token)
+        // Also keep in localStorage as fallback for existing functionality
+        localStorage.setItem('authToken', res.data.token)
+        console.log('🔑 Token stored successfully in both session and local storage')
+        if (typeof onLoginSuccess === 'function') {
+          onLoginSuccess()
+        }
+      } else {
+        throw new Error('No token received from server')
       }
     } catch (err) {
       console.error('Login error:', err)
@@ -99,6 +120,10 @@ function Login({ goToSignup, onLoginSuccess }) {
             placeholder="Email" 
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onInput={(e) => setEmail(e.target.value)}
+            disabled={isSubmitting}
+            autoComplete="email"
+            style={{ pointerEvents: 'auto', zIndex: 1 }}
             required 
           />
         </div>
@@ -109,6 +134,10 @@ function Login({ goToSignup, onLoginSuccess }) {
             placeholder="Password" 
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onInput={(e) => setPassword(e.target.value)}
+            disabled={isSubmitting}
+            autoComplete="current-password"
+            style={{ pointerEvents: 'auto', zIndex: 1 }}
             required 
           />
           <button 

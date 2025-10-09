@@ -100,11 +100,12 @@ export default function EvaluationDashboard({ selectedWorkspace, modelInfo }) {
   };
 
   const evaluateHoldout = async () => {
-    if (!selectedWorkspace || !modelInfo) {
-      alert('Please select workspace and ensure model is trained');
+    if (!selectedWorkspace) {
+      alert('Please select a workspace first');
       return;
     }
 
+    // Note: Holdout evaluation doesn't require modelInfo anymore - it will use available training data
     setIsEvaluating(true);
     setCurrentResults(null);
 
@@ -114,7 +115,7 @@ export default function EvaluationDashboard({ selectedWorkspace, modelInfo }) {
         'http://localhost:3001/api/evaluation/evaluate-holdout',
         {
           workspaceId: selectedWorkspace.id,
-          modelId: modelInfo.modelId,
+          modelId: modelInfo?.modelId || `holdout_${selectedWorkspace.id}`,
           holdoutRatio
         },
         {
@@ -127,10 +128,17 @@ export default function EvaluationDashboard({ selectedWorkspace, modelInfo }) {
 
       setCurrentResults(response.data.evaluation);
       await fetchEvaluationHistory();
-      alert('Holdout evaluation completed successfully!');
+      
+      const dataSource = response.data.evaluation.dataSource;
+      const message = dataSource === 'mock' ? 
+        'Holdout evaluation completed using demo data!' : 
+        'Holdout evaluation completed successfully!';
+      
+      alert(message);
     } catch (error) {
       console.error('Holdout evaluation error:', error);
-      alert(error.response?.data?.message || 'Holdout evaluation failed');
+      const errorMessage = error.response?.data?.message || 'Holdout evaluation failed';
+      alert(`Error: ${errorMessage}`);
     } finally {
       setIsEvaluating(false);
     }
@@ -205,6 +213,10 @@ export default function EvaluationDashboard({ selectedWorkspace, modelInfo }) {
   };
 
   const formatPercentage = (value) => {
+    // Handle null, undefined, or NaN values
+    if (value === null || value === undefined || isNaN(value)) {
+      return '0.00%';
+    }
     return `${(value * 100).toFixed(2)}%`;
   };
 

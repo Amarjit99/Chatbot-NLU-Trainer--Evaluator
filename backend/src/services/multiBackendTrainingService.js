@@ -9,6 +9,29 @@ class MultiBackendTrainingService {
     this.supportedBackends = ['huggingface', 'rasa', 'spacy'];
     this.trainingJobs = new Map(); // Track multi-backend training jobs
     this.comparisons = new Map(); // Store backend comparison results
+    this.trainedModels = new Map(); // Cache for trained models (per backend)
+    this.modelsDir = path.join('uploads', 'models');
+    this._loadAllModelsFromDisk();
+  }
+
+  async _loadAllModelsFromDisk() {
+    try {
+      await fs.ensureDir(this.modelsDir);
+      const files = await fs.readdir(this.modelsDir);
+      for (const file of files) {
+        if (file.endsWith('.json')) {
+          const filePath = path.join(this.modelsDir, file);
+          const modelInfo = await fs.readJson(filePath);
+          if (modelInfo.workspaceId && modelInfo.backend) {
+            const key = `${modelInfo.workspaceId}_${modelInfo.backend}`;
+            this.trainedModels.set(key, modelInfo);
+          }
+        }
+      }
+      console.log(`🔄 Loaded ${this.trainedModels.size} multi-backend models from disk.`);
+    } catch (err) {
+      console.error('Failed to load multi-backend models from disk:', err);
+    }
   }
 
   /**
@@ -100,6 +123,30 @@ class MultiBackendTrainingService {
 
       // Save training results
       await this.saveTrainingResults(workspaceId, trainingJob);
+
+      // Persist model info for each successful backend, including trainingData
+      await fs.ensureDir(this.modelsDir);
+      for (const backendResult of successfulBackends) {
+        const { backend, result } = backendResult;
+        const modelId = result.modelId || `${backend}_model_${workspaceId}_${Date.now()}`;
+        // Save the actual trainingData for prediction after restart
+        const modelInfo = {
+          backend,
+          workspaceId,
+          modelId,
+          createdAt: new Date().toISOString(),
+          status: 'trained',
+          intents: result.intents || [],
+          trainingExamples: result.trainingExamples || trainingData.length,
+          trainingData: Array.isArray(trainingData) ? trainingData : []
+        };
+        const modelPath = path.join(this.modelsDir, `${workspaceId}_${backend}.json`);
+        await fs.writeJson(modelPath, modelInfo, { spaces: 2 });
+        // Cache in memory
+        const key = `${workspaceId}_${backend}`;
+        this.trainedModels.set(key, modelInfo);
+        console.log(`💾 Persisted multi-backend model info: ${modelPath}`);
+      }
 
       console.log(`🎯 Multi-backend training completed: ${successfulBackends.length} successful, ${failedBackends.length} failed`);
 

@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import axios from 'axios'
 import './workspace.css'
-import { FiPlus, FiFolder, FiUpload, FiCpu, FiCheck, FiBarChart2, FiGitBranch, FiTag, FiTarget, FiSettings } from 'react-icons/fi'
+import { FiPlus, FiFolder, FiUpload, FiCpu, FiCheck, FiBarChart2, FiGitBranch, FiTag, FiTarget, FiSettings, FiChevronDown, FiUsers, FiGrid, FiUser, FiLogOut } from 'react-icons/fi'
+import UserProfile from './UserProfile'
 
 // Phase 2: Multi-Backend Training System Components
 import EvaluationDashboard from './EvaluationDashboard'
@@ -14,9 +15,6 @@ import ActiveLearningDashboard from './ActiveLearningDashboard' // PHASE 3 MAIN 
 
 // Phase 4: Admin Dashboard Component
 import AdminDashboard from './AdminDashboard' // SAFE VERSION - FIXED FOR STABILITY
-
-
-
 
 function parseCsv(text) {
   const lines = text.split(/\r?\n/).filter(Boolean)
@@ -87,8 +85,208 @@ export default function Workspace({ goToLogin }) {
   // Dashboard tabs
   const [activeTab, setActiveTab] = useState('training')
 
+  // User role management
+  const [userRole, setUserRole] = useState(null)
+  const [isLoadingUser, setIsLoadingUser] = useState(true)
+  const [user, setUser] = useState(null)
+  const [showProfile, setShowProfile] = useState(false)
+
   // Drag and drop states
   const [isDragOver, setIsDragOver] = useState(false)
+
+  // Workspace selection states
+  const [showWorkspaceSelection, setShowWorkspaceSelection] = useState(false)
+  const [workspaceCreationMode, setWorkspaceCreationMode] = useState(null) // 'existing' or 'new'
+
+  // Pre-defined workspace templates
+  const existingWorkspaces = [
+    {
+      id: 'hr_bot_001',
+      name: 'HR Bot',
+      description: 'Human Resources chatbot for employee queries, leave management, and policy information',
+      icon: '👥',
+      category: 'Business & HR',
+      color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      modelsCount: 3,
+      datasetsCount: 2,
+      lastAccessed: '2024-01-20',
+      sampleIntents: ['leave_request', 'payroll_inquiry', 'benefits_info', 'policy_question'],
+      sampleData: [
+        { text: "How many vacation days do I have left?", intent: "leave_request" },
+        { text: "When will I get my salary?", intent: "payroll_inquiry" },
+        { text: "What are my health insurance benefits?", intent: "benefits_info" },
+        { text: "What's the dress code policy?", intent: "policy_question" }
+      ]
+    },
+    {
+      id: 'travel_bot_001',
+      name: 'Travel Bot',
+      description: 'Travel booking and assistance chatbot for flights, hotels, and travel planning',
+      icon: '✈️',
+      category: 'Travel & Tourism',
+      color: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+      modelsCount: 2,
+      datasetsCount: 3,
+      lastAccessed: '2024-01-18',
+      sampleIntents: ['book_flight', 'hotel_reservation', 'travel_info', 'cancel_booking'],
+      sampleData: [
+        { text: "I want to book a flight to Paris", intent: "book_flight" },
+        { text: "Find me a hotel near downtown", intent: "hotel_reservation" },
+        { text: "What's the weather like in Tokyo?", intent: "travel_info" },
+        { text: "I need to cancel my reservation", intent: "cancel_booking" }
+      ]
+    },
+    {
+      id: 'support_bot_001',
+      name: 'Support Bot',
+      description: 'Customer support chatbot for technical assistance and issue resolution',
+      icon: '🛠️',
+      category: 'Customer Support',
+      color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+      modelsCount: 4,
+      datasetsCount: 1,
+      lastAccessed: '2024-01-22',
+      sampleIntents: ['technical_issue', 'billing_inquiry', 'product_info', 'complaint'],
+      sampleData: [
+        { text: "I can't log into my account", intent: "technical_issue" },
+        { text: "Why was I charged twice?", intent: "billing_inquiry" },
+        { text: "How do I use this feature?", intent: "product_info" },
+        { text: "I want to file a complaint", intent: "complaint" }
+      ]
+    }
+  ]
+
+  // Function to check if user is admin
+  const isAdmin = () => {
+    return userRole === 'admin'
+  }
+
+  const handleLogout = () => {
+    // Clear tokens from both session and local storage
+    sessionStorage.removeItem('authToken')
+    localStorage.removeItem('authToken')
+    localStorage.removeItem('token')
+    setUser(null)
+    setUserRole(null)
+    goToLogin()
+  }
+
+  // Function to get user info from token
+  const getUserInfo = async () => {
+    try {
+      // Try sessionStorage first (tab-specific), then localStorage
+      const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken')
+      if (!token) {
+        setIsLoadingUser(false)
+        return
+      }
+
+      const response = await axios.get('http://localhost:3001/api/auth/me', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+
+      setUserRole(response.data.user.role)
+      setUser(response.data.user)
+      setIsLoadingUser(false)
+    } catch (error) {
+      console.error('Error getting user info:', error)
+      setUserRole(null)
+      setUser(null)
+      setIsLoadingUser(false)
+      // If token is invalid, redirect to login
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        goToLogin()
+      }
+    }
+  }
+
+  // Handle admin tab access
+  const handleAdminTabClick = () => {
+    if (isLoadingUser) {
+      return // Don't allow tab switch while loading
+    }
+    if (!isAdmin()) {
+      alert('⚠️ Access Denied: Administrator privileges required')
+      return
+    }
+    setActiveTab('admin')
+  }
+
+  // Handle workspace selection from existing workspaces
+  const selectExistingWorkspace = (workspace) => {
+    const newWorkspace = {
+      id: workspace.id,
+      name: workspace.name,
+      createdAt: new Date().toISOString().split('T')[0],
+      description: workspace.description,
+      icon: workspace.icon,
+      category: workspace.category
+    }
+    
+    // Check if workspace already exists
+    if (workspaces.some(w => w.id === workspace.id)) {
+      alert('This workspace is already in your list!')
+      return
+    }
+    
+    setWorkspaces([newWorkspace, ...workspaces])
+    setSelectedWorkspace(newWorkspace)
+    setShowWorkspaceSelection(false)
+    setData(workspace.sampleData || [])
+    alert(`${workspace.name} workspace added successfully!`)
+  }
+
+  // Function to fetch user's workspaces from database
+  const fetchUserWorkspaces = async () => {
+    try {
+      // Try sessionStorage first (tab-specific), then localStorage
+      const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken')
+      
+      if (!token) {
+        console.log('No auth token, loading predefined workspaces only')
+        setWorkspaces(existingWorkspaces)
+        return
+      }
+
+      const response = await fetch('http://localhost:3001/api/workspaces', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        console.log('✅ Fetched user workspaces:', data.workspaces)
+        
+        // Combine user's database workspaces with predefined ones
+        const userWorkspaces = data.workspaces.map(ws => ({
+          id: ws.id,
+          name: ws.name,
+          description: ws.description || `Workspace created on ${new Date(ws.createdAt).toLocaleDateString()}`,
+          icon: '📁',
+          category: 'Custom Workspace', 
+          color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+          modelsCount: ws.modelsCount || 0,
+          datasetsCount: ws.datasetsCount || 0,
+          owner: ws.owner,
+          status: ws.status,
+          createdAt: ws.createdAt,
+          lastAccessed: new Date(ws.createdAt).toISOString().split('T')[0]
+        }))
+        
+        // Show user workspaces first, then predefined ones
+        setWorkspaces([...userWorkspaces, ...existingWorkspaces])
+        
+      } else {
+        console.log('Failed to fetch workspaces, using predefined ones')
+        setWorkspaces(existingWorkspaces)
+      }
+      
+    } catch (error) {
+      console.error('Error fetching workspaces:', error)
+      setWorkspaces(existingWorkspaces)
+    }
+  }
 
   useEffect(() => {
     fetch('/data/utterances.json')
@@ -97,34 +295,142 @@ export default function Workspace({ goToLogin }) {
         if (Array.isArray(list)) setSamples(list)
       })
       .catch(() => {})
+    
+    // Load user info and role
+    getUserInfo()
+    // Load user's workspaces
+    fetchUserWorkspaces()
   }, [])
 
   useEffect(() => {
     setSuggested(suggestIntents(utterance))
   }, [utterance])
 
-  const createWorkspace = (e) => {
+  const createWorkspace = async (e) => {
     e.preventDefault()
     const name = newWs.trim()
     if (!name) return
+    
+    // Check for duplicate workspace names locally first
     if (workspaces.some(w => w.name.toLowerCase() === name.toLowerCase())) {
-      alert('Workspace already exists')
+      alert('⚠️ Workspace with this name already exists!')
       return
     }
-    const d = new Date()
-    const createdAt = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
-    const workspaceId = String(Date.now())
-    const newWorkspace = { id: workspaceId, name, createdAt }
-    setWorkspaces([newWorkspace, ...workspaces])
-    setSelectedWorkspace(newWorkspace)
-    setNewWs('')
-    alert('Workspace created')
+    
+    // Add loading state
+    const createBtn = e.target.querySelector('.ws-create-btn')
+    const createSection = document.querySelector('.ws-create-section')
+    
+    if (createBtn) {
+      createBtn.classList.add('loading')
+      createBtn.disabled = true
+      createBtn.textContent = 'Creating...'
+    }
+    
+    try {
+      // Try sessionStorage first (tab-specific), then localStorage
+      const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken')
+      
+      // Call backend API to create workspace
+      const response = await fetch('http://localhost:3001/api/workspaces', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          name: name,
+          description: `Custom workspace created on ${new Date().toLocaleDateString()}`
+        })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        // Create workspace object for frontend
+        const newWorkspace = { 
+          id: data.workspace.id, 
+          name: data.workspace.name, 
+          createdAt: data.workspace.createdAt,
+          owner: data.workspace.owner,
+          status: data.workspace.status,
+          modelsCount: data.workspace.modelsCount || 0,
+          datasetsCount: data.workspace.datasetsCount || 0,
+          icon: '📁',
+          category: 'Custom Workspace'
+        }
+        
+        // Update local state
+        setWorkspaces(prev => [newWorkspace, ...prev])
+        setSelectedWorkspace(newWorkspace)
+        setNewWs('')
+        
+        // Add success state
+        if (createSection) {
+          createSection.classList.add('success')
+          setTimeout(() => {
+            createSection.classList.remove('success')
+          }, 2000)
+        }
+        
+        // Success notification
+        alert(`✅ Workspace "${name}" created successfully and saved to database!`)
+        console.log('✅ Workspace created:', data.workspace)
+        
+      } else {
+        // Handle API errors
+        alert(`❌ Failed to create workspace: ${data.message}`)
+        console.error('Workspace creation failed:', data)
+      }
+
+    } catch (error) {
+      console.error('Error creating workspace:', error)
+      alert(`❌ Error creating workspace: ${error.message}`)
+    } finally {
+      // Remove loading state
+      if (createBtn) {
+        createBtn.classList.remove('loading')
+        createBtn.disabled = false
+        createBtn.textContent = 'Create Workspace'
+      }
+    }
   }
 
   const deleteWorkspace = (id, name) => {
     const ok = confirm(`Delete workspace "${name}"? This cannot be undone.`)
     if (!ok) return
     setWorkspaces(prev => prev.filter(w => w.id !== id))
+    if (selectedWorkspace?.id === id) {
+      setSelectedWorkspace(null)
+      setData([])
+      setFile(null)
+      setModelInfo(null)
+      setPredictionResult(null)
+      setTrainingStatus('')
+    }
+  }
+
+  // Add new function to remove workspace (softer action than delete)
+  const removeWorkspace = (id, name) => {
+    const ok = confirm(`Remove workspace "${name}" from the list? You can add it back later from the workspace selection.`)
+    if (!ok) return
+    
+    setWorkspaces(prev => prev.filter(w => w.id !== id))
+    
+    if (selectedWorkspace?.id === id) {
+      // Clear all related data when removing the selected workspace
+      setSelectedWorkspace(null)
+      setData([])
+      setFile(null)
+      setModelInfo(null)
+      setPredictionResult(null)
+      setTrainingStatus('')
+      setUtterance('')
+      setSuggested([])
+      setActiveTab('training')
+    }
+    
+    alert(`✅ Workspace "${name}" removed successfully!`)
   }
 
   const onSelectFile = (e) => {
@@ -239,7 +545,8 @@ export default function Workspace({ goToLogin }) {
       formData.append('trainingData', file)
       formData.append('workspaceId', selectedWorkspace.id)
 
-      const token = localStorage.getItem('auth_token')
+      // Try sessionStorage first (tab-specific), then localStorage
+      const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken')
       const response = await axios.post('http://localhost:3001/api/training/upload-and-train', formData, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -277,7 +584,8 @@ export default function Workspace({ goToLogin }) {
     setPredictionResult(null)
 
     try {
-      const token = localStorage.getItem('auth_token')
+      // Try sessionStorage first (tab-specific), then localStorage
+      const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken')
       const response = await axios.post('http://localhost:3001/api/training/predict', {
         text: utterance,
         workspaceId: selectedWorkspace.id
@@ -335,12 +643,162 @@ export default function Workspace({ goToLogin }) {
     onSelectFile(mockEvent)
   }
 
+  // Show workspace selection screen if no workspaces exist or user clicks to choose
+  if (workspaces.length === 0 || showWorkspaceSelection) {
+    return (
+      <div className="workspace-selection-screen">
+        <div className="workspace-selection-header">
+          <h1>🚀 Welcome to NLU Trainer</h1>
+          <p>Choose how you'd like to get started with your chatbot training</p>
+        </div>
+
+        <div className="workspace-selection-options">
+          <button 
+            className={`selection-option ${workspaceCreationMode === 'existing' ? 'active' : ''}`}
+            onClick={() => setWorkspaceCreationMode('existing')}
+          >
+            <FiGrid size={24} />
+            <h3>Choose Existing Workspace</h3>
+            <p>Select from pre-built templates like HR Bot, Travel Bot, or Support Bot</p>
+          </button>
+
+          <button 
+            className={`selection-option ${workspaceCreationMode === 'new' ? 'active' : ''}`}
+            onClick={() => setWorkspaceCreationMode('new')}
+          >
+            <FiPlus size={24} />
+            <h3>Create New Workspace</h3>
+            <p>Start from scratch with a custom workspace for your specific needs</p>
+          </button>
+        </div>
+
+        {workspaceCreationMode === 'existing' && (
+          <div className="existing-workspaces-grid">
+            <h2>📋 Available Workspace Templates</h2>
+            <div className="workspace-cards-grid">
+              {existingWorkspaces.map((workspace) => (
+                <div key={workspace.id} className="workspace-template-card">
+                  <div className="card-header" style={{ background: workspace.color }}>
+                    <div className="workspace-icon">{workspace.icon}</div>
+                    <div className="workspace-info">
+                      <h3>{workspace.name}</h3>
+                      <span className="category">{workspace.category}</span>
+                    </div>
+                  </div>
+                  <div className="card-body">
+                    <p className="description">{workspace.description}</p>
+                    <div className="workspace-stats">
+                      <div className="stat">
+                        <span className="label">Models:</span>
+                        <span className="value">{workspace.modelsCount}</span>
+                      </div>
+                      <div className="stat">
+                        <span className="label">Datasets:</span>
+                        <span className="value">{workspace.datasetsCount}</span>
+                      </div>
+                      <div className="stat">
+                        <span className="label">Intents:</span>
+                        <span className="value">{workspace.sampleIntents.length}</span>
+                      </div>
+                    </div>
+                    <div className="sample-intents">
+                      <strong>Sample Intents:</strong>
+                      <div className="intent-tags">
+                        {workspace.sampleIntents.slice(0, 3).map((intent, idx) => (
+                          <span key={idx} className="intent-tag">{intent}</span>
+                        ))}
+                        {workspace.sampleIntents.length > 3 && (
+                          <span className="intent-tag more">+{workspace.sampleIntents.length - 3} more</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="card-footer">
+                    <button 
+                      className="select-template-btn"
+                      onClick={() => selectExistingWorkspace(workspace)}
+                    >
+                      Use {workspace.name} Template
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {workspaceCreationMode === 'new' && (
+          <div className="new-workspace-form">
+            <h2>✨ Create New Workspace</h2>
+            <form onSubmit={createWorkspace} className="workspace-form">
+              <div className="form-group">
+                <label>Workspace Name</label>
+                <input
+                  type="text"
+                  value={newWs}
+                  onChange={(e) => setNewWs(e.target.value)}
+                  placeholder="e.g., My Custom Chatbot"
+                  required
+                />
+              </div>
+              <button type="submit" className="create-btn">
+                <FiPlus size={16} />
+                Create Workspace
+              </button>
+            </form>
+          </div>
+        )}
+
+        {!workspaceCreationMode && (
+          <div className="welcome-message">
+            <p>Click on one of the options above to get started!</p>
+          </div>
+        )}
+
+        {workspaces.length > 0 && (
+          <div className="back-to-workspaces">
+            <button 
+              onClick={() => setShowWorkspaceSelection(false)}
+              className="back-btn"
+            >
+              ← Back to Workspaces
+            </button>
+          </div>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="ws-root">
       <div className="ws-top">
         <div className="ws-brand">Project Workspace</div>
         <div className="ws-spacer" />
-        <button className="ws-logout" onClick={goToLogin}>Log out</button>
+        <button 
+          className="choose-workspace-btn" 
+          onClick={() => setShowWorkspaceSelection(true)}
+        >
+          <FiGrid size={16} />
+          Choose Workspace
+        </button>
+        <div className="user-header-section">
+          {user && (
+            <div className="user-info" onClick={() => setShowProfile(true)}>
+              {user.avatar ? (
+                <div className="user-avatar">
+                  <img src={user.avatar} alt="User Avatar" />
+                </div>
+              ) : (
+                <span className="user-name">{user.name || user.username}</span>
+              )}
+              {isAdmin() && <span className="admin-badge">Admin</span>}
+            </div>
+          )}
+          <button className="ws-logout" onClick={handleLogout}>
+            <FiLogOut size={16} />
+            Log out
+          </button>
+        </div>
       </div>
 
       <div className="ws-columns">
@@ -350,23 +808,47 @@ export default function Workspace({ goToLogin }) {
             {workspaces.map(w => (
               <li key={w.id} className={`ws-item ${selectedWorkspace?.id === w.id ? 'selected' : ''}`}>
                 <div className="ws-item-meta" onClick={() => selectWorkspace(w)}>
-                  <span className="ws-name">{w.name}</span>
-                  <span className="ws-date">Created: {w.createdAt}</span>
+                  <span className="ws-icon">{w.icon || '📁'}</span>
+                  <div className="ws-details">
+                    <span className="ws-name">{w.name}</span>
+                    <span className="ws-date">Created: {w.createdAt}</span>
+                    {w.category && <span className="ws-category">{w.category}</span>}
+                  </div>
                 </div>
-                <button className="ws-delete" onClick={() => deleteWorkspace(w.id, w.name)}>Delete</button>
+                <button 
+                  className="ws-remove" 
+                  onClick={() => removeWorkspace(w.id, w.name)}
+                  title="Remove workspace from list"
+                >
+                  Remove
+                </button>
               </li>
             ))}
-            {workspaces.length === 0 && (
-              <li className="ws-item empty">No workspaces yet. Create your first one below.</li>
-            )}
           </ul>
-          <form className="ws-create" onSubmit={createWorkspace}>
-            <div className="ws-input-row">
-              <span className="ws-plus"><FiPlus /></span>
-              <input className="ws-input" placeholder="Create New Workspace" value={newWs} onChange={(e)=>setNewWs(e.target.value)} />
+
+          {/* Add New Workspace Creation Section */}
+          <div className="ws-create-section">
+            <div className="ws-create-header">
+              <FiPlus size={16} />
+              <span>Create New Workspace</span>
             </div>
-            <button className="ws-button" type="submit">Create</button>
-          </form>
+            <form onSubmit={createWorkspace} className="ws-create-form">
+              <div className="ws-input-group">
+                <input
+                  type="text"
+                  value={newWs}
+                  onChange={(e) => setNewWs(e.target.value)}
+                  placeholder="Enter workspace name..."
+                  className="ws-create-input"
+                  required
+                />
+                <button type="submit" className="ws-create-btn" disabled={!newWs.trim()}>
+                  <FiPlus size={14} />
+                  Create
+                </button>
+              </div>
+            </form>
+          </div>
 
           {samples.length > 0 && (
             <div className="ws-samples">
@@ -390,13 +872,6 @@ export default function Workspace({ goToLogin }) {
               <FiUpload /> Training
             </button>
             <button 
-              className={`ws-tab ${activeTab === 'active-learning' ? 'active' : ''}`}
-              onClick={() => setActiveTab('active-learning')}
-            >
-              <FiTarget /> Active Learning
-            </button>
-
-            <button 
               className={`ws-tab ${activeTab === 'annotation' ? 'active' : ''}`}
               onClick={() => setActiveTab('annotation')}
             >
@@ -415,11 +890,25 @@ export default function Workspace({ goToLogin }) {
               <FiGitBranch /> Versioning
             </button>
             <button 
-              className={`ws-tab ${activeTab === 'admin' ? 'active' : ''}`}
-              onClick={() => setActiveTab('admin')}
+              className={`ws-tab ${activeTab === 'activeLearning' ? 'active' : ''}`}
+              onClick={() => setActiveTab('activeLearning')}
             >
-              <FiSettings /> Admin
+              <FiTarget /> Active Learning
             </button>
+            {/* Admin tab - show for all users but with conditional access */}
+            {isLoadingUser ? (
+              <button className="ws-tab disabled-tab">
+                <FiSettings /> Loading...
+              </button>
+            ) : (
+              <button 
+                className={`ws-tab ${activeTab === 'admin' ? 'active' : ''} ${!isAdmin() ? 'disabled-tab' : ''}`}
+                onClick={handleAdminTabClick}
+                title={isAdmin() ? 'Admin Dashboard' : 'Administrator privileges required'}
+              >
+                <FiSettings /> Admin {!isAdmin() && '🔒'}
+              </button>
+            )}
           </div>
 
           {/* Tab Content */}
@@ -518,7 +1007,9 @@ export default function Workspace({ goToLogin }) {
                 </div>
               )}
             </div>
-          )}              {/* Legacy Single Prediction (for backward compatibility) */}
+          )}
+
+              {/* Legacy Single Prediction (for backward compatibility) */}
               {modelInfo && (
                 <div className="ws-intents">
                   <div className="ov-title">Legacy Intent Prediction</div>
@@ -571,16 +1062,6 @@ export default function Workspace({ goToLogin }) {
             </>
           )}
 
-          {activeTab === 'active-learning' && (
-            <ActiveLearningDashboard 
-              selectedWorkspace={selectedWorkspace}
-              modelInfo={modelInfo}
-              trainingData={data}
-            />
-          )}
-
-
-
           {activeTab === 'annotation' && (
             <EntityAnnotation 
               selectedWorkspace={selectedWorkspace}
@@ -612,15 +1093,44 @@ export default function Workspace({ goToLogin }) {
             />
           )}
 
-          {activeTab === 'admin' && (
+          {activeTab === 'activeLearning' && (
+            <ActiveLearningDashboard 
+              selectedWorkspace={selectedWorkspace}
+              modelInfo={modelInfo}
+              trainingData={data}
+            />
+          )}
+
+          {activeTab === 'admin' && isAdmin() && (
             <AdminDashboard 
               workspaceId={selectedWorkspace?.id}
             />
           )}
 
-
+          {/* Show unauthorized message for non-admin users trying to access admin */}
+          {activeTab === 'admin' && !isAdmin() && (
+            <div style={{ 
+              padding: '40px', 
+              textAlign: 'center', 
+              background: 'linear-gradient(135deg, #ff6b6b, #ee5a24)',
+              borderRadius: '15px',
+              color: 'white',
+              margin: '20px 0'
+            }}>
+              <h2>⚠️ Access Denied</h2>
+              <p>You need administrator privileges to access this section.</p>
+              <p>Please contact your system administrator if you believe this is an error.</p>
+            </div>
+          )}
         </div>
       </div>
+      
+      {/* User Profile Modal */}
+      {showProfile && (
+        <UserProfile
+          onClose={() => setShowProfile(false)}
+        />
+      )}
     </div>
   )
 }

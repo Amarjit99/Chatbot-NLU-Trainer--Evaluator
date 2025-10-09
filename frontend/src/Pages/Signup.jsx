@@ -13,6 +13,11 @@ function Signup({ goToLogin, onSignupSuccess }) {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Debug logging for state changes
+  React.useEffect(() => {
+    console.log('🔍 Signup state:', { username, email, passwordLength: password.length });
+  }, [username, email, password]);
   const typedRef = useRef(null)
 
   useEffect(() => {
@@ -43,33 +48,47 @@ function Signup({ goToLogin, onSignupSuccess }) {
   const handleSignup = async (e) => {
     e.preventDefault();
     if (isSubmitting) return
+    
+    // Enhanced validation
+    if (!username.trim() || !email.trim() || !password.trim()) {
+      alert('Please fill in all fields')
+      return
+    }
+    
+    if (password.length < 6) {
+      alert('Password must be at least 6 characters long')
+      return
+    }
+    
     setIsSubmitting(true)
     try {
-      console.log('Attempting signup with:', { username, email })
-      console.log('Sending request to:', 'http://localhost:3001/api/auth/register')
+      console.log('🆕 Attempting signup with:', { username, email, passwordLength: password.length })
+      console.log('📡 Sending request to:', 'http://localhost:3001/api/auth/register')
+      
       const res = await axios.post('http://localhost:3001/api/auth/register', {
-        username: username,
-        email: email,
+        username: username.trim(),
+        email: email.trim().toLowerCase(),
         password: password,
       }, {
         headers: {
           'Content-Type': 'application/json'
         },
         withCredentials: true,
-        timeout: 10000
+        timeout: 15000
       })
-      console.log('Signup response:', res.data)
-      if (res.status === 201) {
-        const token = res?.data?.token
-        if (token) {
-          localStorage.setItem('auth_token', token)
-        }
-        alert('Signup successful')
+      
+      console.log('✅ Signup response:', res.data)
+      if (res.status === 201 && res.data.token) {
+        localStorage.setItem('auth_token', res.data.token)
+        alert(`Welcome ${res.data.user.username}! Account created successfully.`)
+        console.log('🔑 Token stored successfully')
         if (typeof onSignupSuccess === 'function') {
           onSignupSuccess()
         } else if (typeof goToLogin === 'function') {
           goToLogin()
         }
+      } else {
+        throw new Error('No token received from server')
       }
     } catch (err) {
       console.error('Signup error:', err)
@@ -107,6 +126,10 @@ function Signup({ goToLogin, onSignupSuccess }) {
             placeholder="Username" 
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            onInput={(e) => setUsername(e.target.value)}
+            disabled={isSubmitting}
+            autoComplete="username"
+            style={{ pointerEvents: 'auto', zIndex: 1 }}
             required 
           />
         </div>
@@ -117,6 +140,10 @@ function Signup({ goToLogin, onSignupSuccess }) {
             placeholder="Email" 
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onInput={(e) => setEmail(e.target.value)}
+            disabled={isSubmitting}
+            autoComplete="email"
+            style={{ pointerEvents: 'auto', zIndex: 1 }}
             required 
           />
         </div>
@@ -127,6 +154,10 @@ function Signup({ goToLogin, onSignupSuccess }) {
             placeholder="Password" 
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onInput={(e) => setPassword(e.target.value)}
+            disabled={isSubmitting}
+            autoComplete="new-password"
+            style={{ pointerEvents: 'auto', zIndex: 1 }}
             required 
           />
           <button 

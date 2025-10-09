@@ -1,75 +1,4 @@
-// Helper to export data as CSV
-function exportToCSV(filename, rows, headers) {
-  const csvContent = [
-    headers.join(','),
-    ...rows.map(row => headers.map(h => JSON.stringify(row[h] ?? '')).join(','))
-  ].join('\n');
-  const blob = new Blob([csvContent], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-// Helper to export data as JSON
-function exportToJSON(filename, data) {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-import trainingResults from '../../../backend/uploads/training-results/1759489690007_multi_backend_training.json';
-// Helper to get model health details from training results
-function getModelHealthRows() {
-  if (!trainingResults || !trainingResults.results) return [];
-  return Object.entries(trainingResults.results).map(([backend, result]) => ({
-    backend: backend.charAt(0).toUpperCase() + backend.slice(1),
-    accuracy: result.accuracy,
-    confidence: result.confidence,
-    lastTrained: trainingResults.endTime ? new Date(trainingResults.endTime).toLocaleString() : 'N/A',
-    success: result.success
-  }));
-}
-// Helper to compute intent and entity coverage from annotation file
-function getIntentCoverage() {
-  const intentCounts = {};
-  if (entityAnnotations && entityAnnotations.annotations) {
-    entityAnnotations.annotations.forEach(item => {
-      if (item.intent) {
-        intentCounts[item.intent] = (intentCounts[item.intent] || 0) + 1;
-      }
-    });
-  }
-  return Object.entries(intentCounts).map(([intent, count]) => ({ intent, count }));
-}
 import React, { useState, useEffect, useCallback } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
-import entityAnnotations from '../../../backend/uploads/entity-annotations/travel_bot_001_annotations.json';
-// Helper to compute entity distribution from annotation file
-function getEntityDistribution() {
-  const entityCounts = {};
-  if (entityAnnotations && entityAnnotations.annotations) {
-    entityAnnotations.annotations.forEach(item => {
-      if (item.entities && Array.isArray(item.entities)) {
-        item.entities.forEach(entity => {
-          if (entity.label) {
-            entityCounts[entity.label] = (entityCounts[entity.label] || 0) + 1;
-          }
-        });
-      }
-    });
-  }
-  return Object.entries(entityCounts).map(([label, count]) => ({ label, count }));
-}
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -85,20 +14,6 @@ const AdminDashboard = () => {
   const [realtimeMetrics, setRealtimeMetrics] = useState({});
   const [userActivity, setUserActivity] = useState([]);
 
-  
-    // Models state
-  const [models, setModels] = useState([]);
-
-  // Fetch all models
-  const fetchModels = async () => {
-    try {
-      const response = await apiCall('/training/models');
-      setModels(response.models || []);
-    } catch (error) {
-      console.error('Error fetching models:', error);
-      setModels([]);
-    }
-  };
   // Get auth token from localStorage
   const getAuthToken = () => {
     return localStorage.getItem('authToken');
@@ -131,120 +46,15 @@ const AdminDashboard = () => {
   // Fetch all users (admin only)
   const fetchUsers = async () => {
     try {
-      const response = await apiCall('/admin/users');
-      console.log('Fetched users:', response.users);
+      const response = await apiCall('/auth/users');
       setUsers(response.users || []);
     } catch (error) {
       console.error('Error fetching users:', error);
-      setUsers([]);
-    }
-  };
-
-  // Create user
-  const createUser = async (user) => {
-    try {
-      const response = await apiCall('/auth/users', {
-        method: 'POST',
-        body: JSON.stringify(user)
-      });
-      await fetchUsers();
-      return response;
-    } catch (error) {
-      // Try to extract backend error message
-      let msg = error.message;
-      if (error && error.message && error.message.startsWith('HTTP')) {
-        try {
-          const res = await fetch(`http://localhost:3001/api/auth/users`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': getAuthToken() ? `Bearer ${getAuthToken()}` : '' },
-            body: JSON.stringify(user)
-          });
-          const data = await res.json();
-          msg = data.message || msg;
-        } catch {}
-      }
-      throw new Error(msg);
-    }
-  };
-
-  // Update user
-  const updateUser = async (id, user) => {
-    try {
-      const response = await apiCall(`/auth/users/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(user)
-      });
-      await fetchUsers();
-      return response;
-    } catch (error) {
-      let msg = error.message;
-      if (error && error.message && error.message.startsWith('HTTP')) {
-        try {
-          const res = await fetch(`http://localhost:3001/api/auth/users/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'Authorization': getAuthToken() ? `Bearer ${getAuthToken()}` : '' },
-            body: JSON.stringify(user)
-          });
-          const data = await res.json();
-          msg = data.message || msg;
-        } catch {}
-      }
-      throw new Error(msg);
-    }
-  };
-
-  // Delete user
-  const deleteUser = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this user?')) return;
-    try {
-      await apiCall(`/auth/users/${id}`, { method: 'DELETE' });
-      await fetchUsers();
-    } catch (error) {
-      alert('Failed to delete user: ' + error.message);
-    }
-  };
-
-  // User form state
-  const [showUserForm, setShowUserForm] = useState(false);
-  const [editingUser, setEditingUser] = useState(null);
-  const [userForm, setUserForm] = useState({ username: '', email: '', password: '', role: 'user' });
-  const [userFormError, setUserFormError] = useState('');
-
-  const openCreateUser = () => {
-    setEditingUser(null);
-    setUserForm({ username: '', email: '', password: '', role: 'user' });
-    setUserFormError('');
-    setShowUserForm(true);
-  };
-  const openEditUser = (user) => {
-    setEditingUser(user);
-    setUserForm({ username: user.username, email: user.email, password: '', role: user.role });
-    setUserFormError('');
-    setShowUserForm(true);
-  };
-  const closeUserForm = () => {
-    setShowUserForm(false);
-    setEditingUser(null);
-    setUserForm({ username: '', email: '', password: '', role: 'user' });
-    setUserFormError('');
-  };
-  const handleUserFormChange = (e) => {
-    const { name, value } = e.target;
-    setUserForm((prev) => ({ ...prev, [name]: value }));
-    setUserFormError('');
-  };
-  const handleUserFormSubmit = async (e) => {
-    e.preventDefault();
-    setUserFormError('');
-    try {
-      if (editingUser) {
-        await updateUser(editingUser._id || editingUser.id, userForm);
-      } else {
-        await createUser(userForm);
-      }
-      closeUserForm();
-    } catch (err) {
-      setUserFormError(err?.message || 'Failed to submit user form');
+      // Fallback to mock data if API fails
+      setUsers([
+        { id: 1, username: 'Admin User', email: 'admin@chatbot.com', role: 'admin', createdAt: '2024-01-01', lastLogin: new Date().toISOString() },
+        { id: 2, username: 'Test User', email: 'test@example.com', role: 'user', createdAt: '2024-01-05', lastLogin: '2024-01-14' }
+      ]);
     }
   };
 
@@ -252,15 +62,14 @@ const AdminDashboard = () => {
   const fetchWorkspaces = async () => {
     try {
       const response = await apiCall('/admin/workspaces');
-      console.log('Fetched workspaces:', response.workspaces);
       setWorkspaces(response.workspaces || []);
     } catch (error) {
       console.error('Error fetching workspaces:', error);
-      // Use fallback data only if API fails
+      // Use analytics data as fallback
       setWorkspaces([
         { id: 1, name: 'HR Bot', owner: 'admin', createdAt: '2024-01-01', modelsCount: 3, datasetsCount: 5, status: 'active' },
         { id: 2, name: 'Travel Bot', owner: 'user1', createdAt: '2024-01-05', modelsCount: 2, datasetsCount: 3, status: 'active' },
-        { id: 3, name: 'Support Bot', owner: 'user2', createdAt: '2024-01-10', modelsCount: 1, datasetsCount: 2, status: 'active' }
+        { id: 3, name: 'Support Bot', owner: 'user2', createdAt: '2024-01-10', modelsCount: 1, datasetsCount: 2, status: 'inactive' }
       ]);
     }
   };
@@ -327,14 +136,12 @@ const AdminDashboard = () => {
       await Promise.all([
         fetchUsers(),
         fetchWorkspaces(),
-        fetchModels(),
         fetchSystemHealth(),
         fetchRealtimeMetrics(),
         fetchUserActivity()
       ]);
       setLastRefresh(new Date());
     } catch (error) {
-      console.error('Failed to load admin data:', error);
       setError('Failed to load admin data: ' + error.message);
     } finally {
       setLoading(false);
@@ -388,41 +195,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // Simple error boundary
-  if (error && !loading) {
-    return (
-      <div style={{
-        padding: '25px',
-        background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-        color: '#ffffff',
-        minHeight: '100vh',
-        borderRadius: '16px',
-        margin: '10px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column'
-      }}>
-        <h1>⚠️ Admin Dashboard Error</h1>
-        <p>{error}</p>
-        <button 
-          onClick={handleRefresh}
-          style={{
-            padding: '10px 20px',
-            background: '#ffffff',
-            color: '#ef4444',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontWeight: 'bold'
-          }}
-        >
-          Try Again
-        </button>
-      </div>
-    );
-  }
-
   return (
     <div style={{ 
       padding: '25px', 
@@ -435,7 +207,31 @@ const AdminDashboard = () => {
       boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
       position: 'relative'
     }}>
-      
+      {/* Add CSS animations in style tag */}
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .admin-card {
+          animation: slideIn 0.5s ease-out;
+        }
+        .metric-card:hover {
+          animation: pulse 1s ease-in-out infinite;
+          cursor: pointer;
+        }
+        .status-indicator {
+          animation: pulse 2s ease-in-out infinite;
+        }
+      `}</style>
       <div style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
@@ -501,7 +297,9 @@ const AdminDashboard = () => {
               gap: '6px'
             }}
           >
-            <span>🔄</span>
+            <span style={{ 
+              animation: loading ? 'spin 1s linear infinite' : 'none'
+            }}>�</span>
             {loading ? 'Loading...' : 'Refresh'}
           </button>
         </div>
@@ -624,132 +422,21 @@ const AdminDashboard = () => {
             }}>
               📊 System Overview
             </h2>
-
-            {/* Export Analytics/Statistics Buttons */}
-            <div style={{ marginBottom: 20, display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-              <button
-                style={{ background: '#10b981', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 16px', fontWeight: 'bold', cursor: 'pointer' }}
-                title="Download entity distribution as CSV file"
-                onClick={() => exportToCSV('entity_distribution.csv', getEntityDistribution(), ['label', 'count'])}
-              >Export Entities (CSV)</button>
-              <button
-                style={{ background: '#3b82f6', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 16px', fontWeight: 'bold', cursor: 'pointer' }}
-                title="Download intent coverage as CSV file"
-                onClick={() => exportToCSV('intent_coverage.csv', getIntentCoverage(), ['intent', 'count'])}
-              >Export Intents (CSV)</button>
-              <button
-                style={{ background: '#a855f7', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 16px', fontWeight: 'bold', cursor: 'pointer' }}
-                title="Download model health details as CSV file"
-                onClick={() => exportToCSV('model_health.csv', getModelHealthRows(), ['backend', 'accuracy', 'confidence', 'lastTrained', 'success'])}
-              >Export Model Health (CSV)</button>
-              <button
-                style={{ background: '#f59e0b', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 16px', fontWeight: 'bold', cursor: 'pointer' }}
-                title="Download all analytics/statistics as JSON file"
-                onClick={() => exportToJSON('analytics_export.json', {
-                  entities: getEntityDistribution(),
-                  intents: getIntentCoverage(),
-                  modelHealth: getModelHealthRows()
-                })}
-              >Export All (JSON)</button>
-            </div>
-            {/* Entity Distribution Bar Chart */}
-            <div style={{ marginBottom: 30, background: '#232044', borderRadius: 12, padding: 20, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
-              <h3 style={{ color: '#fff', fontWeight: 'bold', marginBottom: 10 }}>Entity Distribution</h3>
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={getEntityDistribution()} margin={{ top: 10, right: 30, left: 0, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="label" stroke="#fff" />
-                  <YAxis stroke="#fff" allowDecimals={false} />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="count" fill="#10b981" name="Count" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Dataset Coverage Breakdown */}
-            <div style={{ marginBottom: 30, background: '#232044', borderRadius: 12, padding: 20, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
-              <h3 style={{ color: '#fff', fontWeight: 'bold', marginBottom: 10 }}>Dataset Coverage Breakdown</h3>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 40 }}>
-                <div>
-                  <h4 style={{ color: '#10b981', marginBottom: 8 }}>Intents</h4>
-                  <table style={{ color: '#fff', borderCollapse: 'collapse', minWidth: 180 }}>
-                    <thead>
-                      <tr><th style={{ textAlign: 'left', padding: 4 }}>Intent</th><th style={{ textAlign: 'right', padding: 4 }}>Count</th></tr>
-                    </thead>
-                    <tbody>
-                      {getIntentCoverage().map(row => (
-                        <tr key={row.intent}>
-                          <td style={{ padding: 4 }}>{row.intent}</td>
-                          <td style={{ padding: 4, textAlign: 'right' }}>{row.count}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <div>
-                  <h4 style={{ color: '#10b981', marginBottom: 8 }}>Entities</h4>
-                  <table style={{ color: '#fff', borderCollapse: 'collapse', minWidth: 180 }}>
-                    <thead>
-                      <tr><th style={{ textAlign: 'left', padding: 4 }}>Entity</th><th style={{ textAlign: 'right', padding: 4 }}>Count</th></tr>
-                    </thead>
-                    <tbody>
-                      {getEntityDistribution().map(row => (
-                        <tr key={row.label}>
-                          <td style={{ padding: 4 }}>{row.label}</td>
-                          <td style={{ padding: 4, textAlign: 'right' }}>{row.count}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            {/* Model Health Details */}
-            <div style={{ marginBottom: 30, background: '#232044', borderRadius: 12, padding: 20, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
-              <h3 style={{ color: '#fff', fontWeight: 'bold', marginBottom: 10 }}>Model Health Details</h3>
-              <table style={{ color: '#fff', borderCollapse: 'collapse', minWidth: 320 }}>
-                <thead>
-                  <tr>
-                    <th style={{ textAlign: 'left', padding: 4 }}>Backend</th>
-                    <th style={{ textAlign: 'right', padding: 4 }}>Accuracy</th>
-                    <th style={{ textAlign: 'right', padding: 4 }}>Confidence</th>
-                    <th style={{ textAlign: 'right', padding: 4 }}>Last Trained</th>
-                    <th style={{ textAlign: 'center', padding: 4 }}>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {getModelHealthRows().map((row, idx) => (
-                    <tr key={row.backend + idx}>
-                      <td style={{ padding: 4 }}>{row.backend}</td>
-                      <td style={{ padding: 4, textAlign: 'right' }}>{row.accuracy != null ? (row.accuracy * 100).toFixed(1) + '%' : 'N/A'}</td>
-                      <td style={{ padding: 4, textAlign: 'right' }}>{row.confidence != null ? (row.confidence * 100).toFixed(1) + '%' : 'N/A'}</td>
-                      <td style={{ padding: 4, textAlign: 'right' }}>{row.lastTrained}</td>
-                      <td style={{ padding: 4, textAlign: 'center' }}>
-                        {row.success ? <span style={{ color: '#10b981', fontWeight: 'bold' }}>Healthy</span> : <span style={{ color: '#ef4444', fontWeight: 'bold' }}>Error</span>}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
             
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-              gap: '18px',
-              marginBottom: '35px',
-              width: '100%',
-              maxWidth: '100vw',
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+              gap: '25px',
+              marginBottom: '35px'
             }}>
-              <div style={{
+              <div className="metric-card admin-card" style={{
                 padding: '25px',
                 background: 'linear-gradient(135deg, #6d9e8eff 0%, #10b981 100%)',
                 borderRadius: '16px',
                 textAlign: 'center',
                 border: '2px solid #34d399',
-                boxShadow: '0 8px 20px rgba(16, 185, 129, 0.3)'
+                boxShadow: '0 8px 20px rgba(16, 185, 129, 0.3)',
+                transition: 'all 0.3s ease'
               }}>
                 <h3 style={{ 
                   margin: '0 0 15px 0', 
@@ -887,6 +574,87 @@ const AdminDashboard = () => {
                 <span>Backends: {systemHealth.activeBackends || 0}/{systemHealth.totalBackends || 3}</span>
               </div>
             </div>
+            
+            {/* Recent Activity Section */}
+            <div style={{
+              marginTop: '30px',
+              padding: '25px',
+              background: 'rgba(0, 0, 0, 0.3)',
+              borderRadius: '16px',
+              border: '2px solid #475569'
+            }}>
+              <h3 style={{
+                color: '#f59e0b',
+                marginBottom: '20px',
+                fontSize: '22px',
+                fontWeight: 'bold',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px'
+              }}>
+                📋 Recent Activity
+              </h3>
+              
+              {userActivity.length > 0 ? (
+                <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                  {userActivity.slice(0, 5).map((activity, index) => (
+                    <div key={activity.id || index} style={{
+                      padding: '12px 16px',
+                      marginBottom: '8px',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '8px',
+                      borderLeft: `4px solid ${
+                        activity.type === 'training' ? '#10b981' :
+                        activity.type === 'prediction' ? '#3b82f6' :
+                        activity.type === 'analytics' ? '#f59e0b' : '#6b7280'
+                      }`
+                    }}>
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        gap: '10px'
+                      }}>
+                        <div>
+                          <div style={{
+                            color: '#ffffff',
+                            fontSize: '14px',
+                            fontWeight: 'bold',
+                            marginBottom: '4px'
+                          }}>
+                            {activity.description}
+                          </div>
+                          <div style={{
+                            color: '#cbd5e1',
+                            fontSize: '12px'
+                          }}>
+                            Type: {activity.type} • {activity.workspaceId ? `Workspace: ${activity.workspaceId}` : 'System'}
+                          </div>
+                        </div>
+                        <div style={{
+                          color: '#9ca3af',
+                          fontSize: '11px',
+                          textAlign: 'right',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {new Date(activity.timestamp).toLocaleTimeString()}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={{
+                  textAlign: 'center',
+                  color: '#9ca3af',
+                  fontSize: '16px',
+                  padding: '40px 20px',
+                  fontStyle: 'italic'
+                }}>
+                  No recent activity recorded
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -901,31 +669,24 @@ const AdminDashboard = () => {
             }}>
               👥 User Management
             </h2>
-            <div style={{ color: '#fff', marginBottom: 12, fontWeight: 'bold', fontSize: 18 }}>
-              Total Registered Users: {users.length}
-            </div>
-            <button onClick={openCreateUser} style={{ marginBottom: 16, padding: '8px 18px', background: '#10b981', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 'bold', fontSize: 16, cursor: 'pointer' }}>+ Add User</button>
-            <div style={{
+            
+            <div style={{ 
               background: '#374151',
               borderRadius: '16px',
-              overflowX: 'auto',
+              overflow: 'hidden',
               border: '2px solid #475569',
-              boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)',
-              minWidth: 0,
-              marginBottom: 16,
-              maxWidth: '100%',
+              boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)'
             }}>
-              <div style={{
+              <div style={{ 
                 display: 'grid',
-                gridTemplateColumns: 'minmax(120px,1fr) minmax(180px,2fr) minmax(80px,1fr) minmax(120px,1fr) minmax(120px,1fr) 120px',
+                gridTemplateColumns: '1fr 2fr 1fr 1fr 1fr 120px',
                 gap: '20px',
                 padding: '20px 25px',
                 background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
                 fontWeight: 'bold',
                 fontSize: '18px',
                 color: '#ffffff',
-                textShadow: '0 2px 6px rgba(0,0,0,0.3)',
-                minWidth: 700,
+                textShadow: '0 2px 6px rgba(0,0,0,0.3)'
               }}>
                 <div>Username</div>
                 <div>Email</div>
@@ -936,65 +697,79 @@ const AdminDashboard = () => {
               </div>
 
               {users.map(user => (
-                <div key={user._id || user.id} style={{
+                <div key={user.id} style={{ 
                   display: 'grid',
-                  gridTemplateColumns: 'minmax(120px,1fr) minmax(180px,2fr) minmax(80px,1fr) minmax(120px,1fr) minmax(120px,1fr) 120px',
+                  gridTemplateColumns: '1fr 2fr 1fr 1fr 1fr 120px',
                   gap: '20px',
                   padding: '20px 25px',
                   borderBottom: '2px solid #4b5563',
                   fontSize: '16px',
-                  alignItems: 'center',
-                  minWidth: 700,
+                  alignItems: 'center'
                 }}>
-                  <div style={{ color: '#ffffff', fontWeight: 'bold', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>{user.username}</div>
+                  <div style={{ 
+                    color: '#ffffff', 
+                    fontWeight: 'bold',
+                    textShadow: '0 1px 3px rgba(0,0,0,0.3)'
+                  }}>
+                    {user.username}
+                  </div>
                   <div style={{ color: '#e2e8f0' }}>{user.email}</div>
-                  <div style={{ color: user.role === 'admin' ? '#d0a128ff' : '#34d399', fontWeight: 'bold', textTransform: 'uppercase', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>{user.role}</div>
+                  <div style={{ 
+                    color: user.role === 'admin' ? '#d0a128ff' : '#34d399',
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase',
+                    textShadow: '0 1px 3px rgba(0,0,0,0.3)'
+                  }}>
+                    {user.role}
+                  </div>
                   <div style={{ color: '#cbd5e1' }}>{formatDate(user.createdAt)}</div>
                   <div style={{ color: '#cbd5e1' }}>{formatDate(user.lastLogin)}</div>
-                  <div style={{ display: 'flex', gap: '6px' }}>
-                    <button style={{ padding: '6px 10px', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: 4, fontSize: 12, cursor: 'pointer', fontWeight: 'bold' }} onClick={() => openEditUser(user)} title="Edit user">✏️</button>
+                  <div style={{ 
+                    display: 'flex',
+                    gap: '6px'
+                  }}>
+                    <button
+                      style={{
+                        padding: '6px 10px',
+                        background: '#3b82f6',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: '4px',
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        fontWeight: 'bold'
+                      }}
+                      onClick={() => console.log('Edit user:', user.id)}
+                      title="Edit user"
+                    >
+                      ✏️
+                    </button>
                     {user.role !== 'admin' && (
-                      <button style={{ padding: '6px 10px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: 4, fontSize: 12, cursor: 'pointer', fontWeight: 'bold' }} onClick={() => deleteUser(user._id || user.id)} title="Delete user">🗑️</button>
+                      <button
+                        style={{
+                          padding: '6px 10px',
+                          background: '#ef4444',
+                          color: '#ffffff',
+                          border: 'none',
+                          borderRadius: '4px',
+                          fontSize: '12px',
+                          cursor: 'pointer',
+                          fontWeight: 'bold'
+                        }}
+                        onClick={() => {
+                          if (confirm(`Delete user ${user.username}?`)) {
+                            console.log('Delete user:', user.id);
+                          }
+                        }}
+                        title="Delete user"
+                      >
+                        🗑️
+                      </button>
                     )}
                   </div>
                 </div>
               ))}
             </div>
-
-            {/* User Form Modal */}
-            {showUserForm && (
-              <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <form onSubmit={handleUserFormSubmit} style={{ background: '#22223b', padding: 32, borderRadius: 16, minWidth: 350, boxShadow: '0 8px 32px rgba(0,0,0,0.4)', display: 'flex', flexDirection: 'column', gap: 18 }}>
-                  <h3 style={{ color: '#fff', margin: 0 }}>{editingUser ? 'Edit User' : 'Add User'}</h3>
-                  <label style={{ color: '#fff' }}>
-                    Username:
-                    <input name="username" value={userForm.username} onChange={handleUserFormChange} required style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #475569', marginTop: 4 }} />
-                  </label>
-                  <label style={{ color: '#fff' }}>
-                    Email:
-                    <input name="email" type="email" value={userForm.email} onChange={handleUserFormChange} required style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #475569', marginTop: 4 }} />
-                  </label>
-                  <label style={{ color: '#fff' }}>
-                    Password:
-                    <input name="password" type="password" value={userForm.password} onChange={handleUserFormChange} required={!editingUser} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #475569', marginTop: 4 }} placeholder={editingUser ? '(Leave blank to keep current password)' : ''} />
-                  </label>
-                  <label style={{ color: '#fff' }}>
-                    Role:
-                    <select name="role" value={userForm.role} onChange={handleUserFormChange} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #475569', marginTop: 4 }}>
-                      <option value="user">User</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                  </label>
-                  {userFormError && (
-                    <div style={{ color: '#ef4444', background: '#fee2e2', borderRadius: 6, padding: 8, fontWeight: 'bold', marginTop: 4, textAlign: 'center' }}>{userFormError}</div>
-                  )}
-                  <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
-                    <button type="submit" style={{ background: '#10b981', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 'bold', fontSize: 16, padding: '8px 18px', cursor: 'pointer' }}>{editingUser ? 'Update' : 'Create'}</button>
-                    <button type="button" onClick={closeUserForm} style={{ background: '#ef4444', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 'bold', fontSize: 16, padding: '8px 18px', cursor: 'pointer' }}>Cancel</button>
-                  </div>
-                </form>
-              </div>
-            )}
           </div>
         )}
 
@@ -1272,14 +1047,6 @@ const AdminDashboard = () => {
           </div>
         )}
       </div>
-
-      {/* Inline styles for animations */}
-      <style>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 };

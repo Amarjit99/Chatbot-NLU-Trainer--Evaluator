@@ -266,7 +266,7 @@ const ActiveLearningDashboard = ({ selectedWorkspace, modelInfo }) => {
 
       <div className="dashboard-content">
         {/* Statistics Overview */}
-        {statistics && (
+        {statistics ? (
           <div className="statistics-section">
             <h3><FiBarChart2 /> Active Learning Statistics</h3>
             <div className="stats-grid">
@@ -300,21 +300,30 @@ const ActiveLearningDashboard = ({ selectedWorkspace, modelInfo }) => {
               </div>
             </div>
           </div>
+        ) : (
+          <div className="statistics-section empty-state">
+            <h3><FiBarChart2 /> No Statistics Available</h3>
+            <p>No statistics found for this workspace. Try running an analysis or check your backend connection.</p>
+          </div>
         )}
 
         {/* Analysis Section */}
         <div className="analysis-section">
           <h3><FiTarget /> Uncertainty Analysis</h3>
-          
           <div className="analysis-controls">
             <div className="control-group">
               <label>Test Data File:</label>
-              <input
-                type="file"
-                accept=".json"
-                onChange={handleTestFileUpload}
-                className="file-input"
-              />
+              <label className="upload-label" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginTop: '0.5rem' }}>
+                <FiUpload />
+                <span>Upload Test Data (JSON)</span>
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={handleTestFileUpload}
+                  className="file-input"
+                  style={{ display: 'none' }}
+                />
+              </label>
               {testFile && (
                 <div className="file-info">
                   Selected: {testFile.name} ({(testFile.size / 1024).toFixed(1)} KB)
@@ -412,7 +421,7 @@ const ActiveLearningDashboard = ({ selectedWorkspace, modelInfo }) => {
         </div>
 
         {/* Uncertain Samples Section */}
-        {uncertainSamples.length > 0 && (
+        {uncertainSamples.length > 0 ? (
           <div className="uncertain-samples-section">
             <div className="section-header">
               <h3><FiAlertTriangle /> Uncertain Samples for Review</h3>
@@ -500,10 +509,15 @@ const ActiveLearningDashboard = ({ selectedWorkspace, modelInfo }) => {
               </div>
             )}
           </div>
+        ) : (
+          <div className="uncertain-samples-section empty-state">
+            <h3><FiAlertTriangle /> No Uncertain Samples</h3>
+            <p>No uncertain samples found for this workspace. Try running an analysis or check your backend connection.</p>
+          </div>
         )}
 
         {/* Feedback History Section */}
-        {feedbackHistory.length > 0 && (
+        {feedbackHistory.length > 0 ? (
           <div className="feedback-history-section">
             <h3><FiBookOpen /> Recent Feedback History</h3>
             <div className="feedback-list">
@@ -527,6 +541,11 @@ const ActiveLearningDashboard = ({ selectedWorkspace, modelInfo }) => {
                 </div>
               ))}
             </div>
+          </div>
+        ) : (
+          <div className="feedback-history-section empty-state">
+            <h3><FiBookOpen /> No Feedback History</h3>
+            <p>No feedback corrections found for this workspace. Submit feedback to see history here.</p>
           </div>
         )}
 

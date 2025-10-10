@@ -121,7 +121,7 @@ const MultiBackendTraining = ({
       setTrainingResults(null);
 
       // Check authentication
-      const token = localStorage.getItem('auth_token');
+      const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken') || localStorage.getItem('token');
       if (!token) {
         throw new Error('Authentication token not found. Please log in again.');
       }

@@ -1,8 +1,8 @@
-# 🚀 **Advanced Multi-Backend NLU Chatbot Trainer - Deployment Guide**
+# 🚀 **Chatbot NLU Trainer & Evaluator - Deployment Guide**
 
 <div align="center">
 
-**Complete Production Deployment Guide for ChatbotNLU-Trainer**
+**Complete Production Deployment Guide for Chatbot NLU Trainer & Evaluator**
 
 [![Production Ready](https://img.shields.io/badge/Production-Ready-green.svg)](https://github.com/Amarjit99/advanced-multi-backend-nlu-chatbot)
 [![Docker Support](https://img.shields.io/badge/Docker-Supported-blue.svg)](https://github.com/Amarjit99/advanced-multi-backend-nlu-chatbot)
@@ -300,4 +300,4 @@ deploy:
 - [ ] Logs monitored for errors
 - [ ] Backup strategy in place
 
-**🎉 Your Chatbot NLU Trainer is ready for production!**
+**🎉 Your Chatbot NLU Trainer & Evaluator is ready for production!**

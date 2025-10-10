@@ -1,4 +1,4 @@
-# 📚 **Advanced Multi-Backend NLU Chatbot Trainer - Complete User Guide**
+# 📚 **Chatbot NLU Trainer & Evaluator - Complete User Guide**
 
 <div align="center">
 
@@ -10,7 +10,7 @@
 
 </div>
 
-Welcome to the most comprehensive NLU training platform! This guide covers all features, from basic setup to advanced AI model management.
+Welcome to the Chatbot NLU Trainer & Evaluator! This guide covers all features, from basic setup to advanced model management across multiple backends.
 
 ---
 

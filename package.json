@@ -1,7 +1,7 @@
 {
-  "name": "chatbotnlu-trainer",
+  "name": "chatbot-nlu-trainer-evaluator",
   "version": "1.0.0",
-  "description": "Advanced Multi-Backend NLU Chatbot Trainer - A comprehensive full-stack AI training platform with multi-backend Natural Language Understanding support",
+  "description": "Chatbot NLU Trainer & Evaluator - A comprehensive full-stack training and evaluation platform with multi-backend Natural Language Understanding support",
   "main": "index.js",
   "repository": {
     "type": "git",

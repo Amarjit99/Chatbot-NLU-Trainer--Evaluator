@@ -1,4 +1,4 @@
-# ⚡ **Advanced Multi-Backend NLU Chatbot Trainer - Quick Start Guide**
+# ⚡ **Chatbot NLU Trainer & Evaluator - Quick Start Guide**
 
 <div align="center">
 
@@ -29,10 +29,10 @@ npm run install:all
 ### Step 3: Start Application
 ```bash
 # Terminal 1 - Backend Server
-cd backend && npm run dev
+cd backend; npm run dev
 
 # Terminal 2 - Frontend Server (new terminal)
-cd frontend && npm run dev
+cd frontend; npm run dev
 ```
 
 ### Step 4: Access Application

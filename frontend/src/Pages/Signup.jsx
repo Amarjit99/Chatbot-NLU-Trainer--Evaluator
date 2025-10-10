@@ -27,7 +27,7 @@ function Signup({ goToLogin, onSignupSuccess }) {
         const { default: Typed } = await import('typed.js')
         if (typedRef.current) {
           const typed = new Typed(typedRef.current, {
-            strings: ['Welcome to ChatBot NLU Trainer'],
+            strings: ['Welcome to Chatbot NLU Trainer & Evaluator'],
             typeSpeed: 80,
             backSpeed: 40,
             loop: false,
@@ -38,7 +38,7 @@ function Signup({ goToLogin, onSignupSuccess }) {
       } catch (error) {
         console.log('Typed.js not available, using static text')
         if (typedRef.current) {
-          typedRef.current.textContent = 'Welcome to ChatBot NLU Trainer'
+          typedRef.current.textContent = 'Welcome to Chatbot NLU Trainer & Evaluator'
         }
       }
     }
@@ -115,7 +115,7 @@ function Signup({ goToLogin, onSignupSuccess }) {
   return (
     <div className="signup-container">
       <div className="website-title">
-        <span ref={typedRef}>Welcome to ChatBot NLU Trainer</span>
+        <span ref={typedRef}>Welcome to Chatbot NLU Trainer & Evaluator</span>
       </div>
       <h2>Create Your Account</h2>
       <form onSubmit={handleSignup} className="auth-form">

@@ -1,4 +1,4 @@
-# 🤖 Advanced Multi-Backend NLU Chatbot Trainer
+# 🤖 Chatbot NLU Trainer & Evaluator
 
 <div align="center">
 
@@ -6,7 +6,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/Amarjit99/advanced-multi-backend-nlu-chatbot.svg)](https://github.com/Amarjit99/advanced-multi-backend-nlu-chatbot/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/Amarjit99/advanced-multi-backend-nlu-chatbot.svg)](https://github.com/Amarjit99/advanced-multi-backend-nlu-chatbot/issues)
 
-**A comprehensive full-stack AI training platform with multi-backend Natural Language Understanding (NLU) support**
+**A comprehensive full-stack training and evaluation platform with multi-backend Natural Language Understanding (NLU) support**
 
 [🚀 Quick Start](#-quick-start) • [📖 Documentation](#-documentation) • [🛠️ Installation](#️-installation--setup) • [🐳 Docker](#-docker-deployment) • [🤝 Contributing](#-contributing)
 
@@ -316,7 +316,7 @@ The frontend will start on `http://localhost:5173`
 ## 📁 Complete Project Structure
 
 ```
-📦 ChatbotNLU-Trainer/
+📦 Chatbot-NLU-Trainer-Evaluator/
 ├── 📂 backend/                          # Node.js/Express Backend
 │   ├── 📂 src/
 │   │   ├── 📂 config/
@@ -478,8 +478,8 @@ The frontend will start on `http://localhost:5173`
 ### Option 1: Docker Deployment (Recommended)
 ```bash
 # Clone and build
-git clone https://github.com/yourusername/ChatbotNLU-Trainer.git
-cd ChatbotNLU-Trainer
+git clone https://github.com/Amarjit99/advanced-multi-backend-nlu-chatbot.git
+cd advanced-multi-backend-nlu-chatbot
 
 # Build and run containers
 docker-compose up --build
@@ -717,8 +717,8 @@ docker-compose up --build --force-recreate
 
 ```bash
 # Production deployment with Docker
-git clone https://github.com/yourusername/ChatbotNLU-Trainer.git
-cd ChatbotNLU-Trainer
+git clone https://github.com/Amarjit99/advanced-multi-backend-nlu-chatbot.git
+cd advanced-multi-backend-nlu-chatbot
 
 # Configure environment
 cp .env.example .env
@@ -760,7 +760,7 @@ docker-compose logs -f
 
 ```yaml
 # .github/workflows/deploy.yml
-name: Deploy ChatbotNLU-Trainer
+name: Deploy Chatbot NLU Trainer & Evaluator
 on:
   push:
     branches: [main]
@@ -839,7 +839,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](./LICENSE
 
 ### Having Issues?
 1. Check the [Troubleshooting Guide](#-troubleshooting-guide)
-2. Search existing [GitHub Issues](https://github.com/yourusername/ChatbotNLU-Trainer/issues)
+2. Search existing [GitHub Issues](https://github.com/Amarjit99/advanced-multi-backend-nlu-chatbot/issues)
 3. Create a new issue with detailed information
 
 ---
@@ -850,9 +850,9 @@ This project is licensed under the **MIT License** - see the [LICENSE](./LICENSE
 
 Made with ❤️ for the NLU community
 
-![GitHub Stars](https://img.shields.io/github/stars/yourusername/ChatbotNLU-Trainer?style=social)
-![GitHub Forks](https://img.shields.io/github/forks/yourusername/ChatbotNLU-Trainer?style=social)
-![GitHub Issues](https://img.shields.io/github/issues/yourusername/ChatbotNLU-Trainer)
+![GitHub Stars](https://img.shields.io/github/stars/Amarjit99/advanced-multi-backend-nlu-chatbot?style=social)
+![GitHub Forks](https://img.shields.io/github/forks/Amarjit99/advanced-multi-backend-nlu-chatbot?style=social)
+![GitHub Issues](https://img.shields.io/github/issues/Amarjit99/advanced-multi-backend-nlu-chatbot)
 
 </div>
 

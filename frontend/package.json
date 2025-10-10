@@ -1,5 +1,5 @@
 {
-  "name": "chatbot-nlu-trainer-frontend",
+  "name": "chatbot-nlu-trainer-evaluator-frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",

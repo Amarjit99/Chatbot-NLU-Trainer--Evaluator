@@ -52,8 +52,8 @@ const AdminDashboard = () => {
       console.error('Error fetching users:', error);
       // Fallback to mock data if API fails
       setUsers([
-        { id: 1, username: 'Admin User', email: 'admin@chatbot.com', role: 'admin', createdAt: '2024-01-01', lastLogin: new Date().toISOString() },
-        { id: 2, username: 'Test User', email: 'test@example.com', role: 'user', createdAt: '2024-01-05', lastLogin: '2024-01-14' }
+        { id: 1, username: 'Admin User', email: 'admin@chatbot.com', role: 'admin', createdAt: '2025-09-01', lastLogin: new Date().toISOString() },
+        { id: 2, username: 'Test User', email: 'test@example.com', role: 'user', createdAt: '2025-09-05', lastLogin: '2025-09-01' }
       ]);
     }
   };

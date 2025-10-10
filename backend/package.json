@@ -1,5 +1,5 @@
 {
-  "name": "chatbot-nlu-trainer-backend",
+  "name": "chatbot-nlu-trainer-evaluator-backend",
   "version": "1.0.0",
   "type": "module",
   "main": "src/index.js",
@@ -25,7 +25,7 @@
   "devDependencies": {
     "nodemon": "^3.1.10"
   },
-  "description": "Chatbot NLU Trainer - Backend API for Natural Language Understanding Training Platform",
+  "description": "Chatbot NLU Trainer & Evaluator - Backend API for Natural Language Understanding Training and Evaluation Platform",
   "keywords": [
     "chatbot",
     "nlu",

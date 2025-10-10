@@ -268,7 +268,129 @@ deploy:
 
 ---
 
-## 🎯 **Next Steps**
+## � **Free-Tier Hosting Deployment**
+
+### 🚀 **Streamlit Cloud Deployment**
+
+Deploy the demo interface on Streamlit Cloud (100% free):
+
+1. **Prepare for Streamlit**:
+   ```bash
+   # Use the streamlit_app.py file
+   # Requirements: requirements.txt (already provided)
+   ```
+
+2. **Deploy to Streamlit Cloud**:
+   - Go to [share.streamlit.io](https://share.streamlit.io)
+   - Connect your GitHub repository
+   - Select `streamlit_app.py` as the main file
+   - Deploy automatically
+
+3. **Configuration**:
+   - Main file: `streamlit_app.py`
+   - Python version: 3.9+
+   - Requirements: `requirements.txt`
+
+---
+
+### 🤗 **Hugging Face Spaces Deployment**
+
+Deploy on Hugging Face Spaces with Gradio interface:
+
+1. **Create Hugging Face Space**:
+   - Go to [huggingface.co/spaces](https://huggingface.co/spaces)
+   - Create new Space with Gradio SDK
+   - Clone your Space repository
+
+2. **Deploy Configuration**:
+   ```bash
+   # Copy files to your Space
+   cp gradio_app.py your-space/app.py
+   cp requirements_gradio.txt your-space/requirements.txt
+   ```
+
+3. **Space Configuration**:
+   - SDK: Gradio
+   - Python version: 3.9+
+   - Hardware: CPU Basic (free)
+
+---
+
+### 🚂 **Railway Deployment**
+
+Deploy full application on Railway (free tier available):
+
+1. **Prepare Railway Deployment**:
+   ```bash
+   # Files already created:
+   # - railway.toml
+   # - Procfile
+   ```
+
+2. **Deploy to Railway**:
+   - Connect GitHub repository to Railway
+   - Railway will auto-detect and deploy
+   - Add environment variables from `.env.deployment`
+
+3. **Configuration**:
+   - Build command: Automatic detection
+   - Start command: `npm start`
+   - Environment: Copy from `.env.deployment`
+
+---
+
+### 🎨 **Render Deployment**
+
+Deploy on Render web services (free tier):
+
+1. **Prepare Render Deployment**:
+   ```bash
+   # File already created: render.yaml
+   ```
+
+2. **Deploy to Render**:
+   - Connect GitHub repository
+   - Select "Blueprint" deployment
+   - Use `render.yaml` for configuration
+
+3. **Configuration**:
+   - Frontend: Static site
+   - Backend: Web service
+   - Database: PostgreSQL (free)
+
+---
+
+### ⚡ **Vercel Deployment**
+
+Deploy frontend on Vercel (free for frontend):
+
+1. **Frontend-Only Deployment**:
+   ```bash
+   cd frontend
+   npm run build
+   # Deploy dist/ folder to Vercel
+   ```
+
+2. **Configuration**:
+   - Framework: React
+   - Build command: `npm run build`
+   - Output directory: `dist`
+
+---
+
+### 📋 **Free-Tier Hosting Comparison**
+
+| Platform | Best For | Limitations | Features |
+|----------|----------|-------------|-----------|
+| **Streamlit Cloud** | Quick demos | Python only | Easy deployment, automatic updates |
+| **Hugging Face Spaces** | ML demos | Limited compute | AI community, GPU options |
+| **Railway** | Full apps | 500 hours/month | Full-stack, databases included |
+| **Render** | Web services | Sleep after inactivity | Auto-scaling, SSL included |
+| **Vercel** | Frontend | Static sites only | Global CDN, fast builds |
+
+---
+
+## �🎯 **Next Steps**
 
 1. **Database Integration**: Add PostgreSQL for persistent user data
 2. **Caching**: Implement Redis for improved performance  

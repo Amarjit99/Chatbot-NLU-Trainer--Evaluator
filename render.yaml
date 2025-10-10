@@ -1,0 +1,71 @@
+services:
+  # Backend API Service
+  - type: web
+    name: chatbot-nlu-backend
+    env: node
+    plan: free
+    buildCommand: cd backend && npm ci
+    startCommand: cd backend && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGO_URI
+        fromDatabase:
+          name: chatbot-nlu-db
+          property: connectionString
+    autoDeploy: true
+    branch: main
+    rootDir: .
+    
+  # Frontend Web Service
+  - type: web
+    name: chatbot-nlu-frontend
+    env: static
+    plan: free
+    buildCommand: cd frontend && npm ci && npm run build
+    staticPublishPath: ./frontend/dist
+    envVars:
+      - key: NODE_ENV
+        value: production
+    autoDeploy: true
+    branch: main
+    rootDir: .
+    
+  # Background Worker (optional, for model training)
+  - type: worker
+    name: chatbot-nlu-worker
+    env: node
+    plan: free
+    buildCommand: cd backend && npm ci
+    startCommand: cd backend && node src/scripts/worker.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        fromDatabase:
+          name: chatbot-nlu-db
+          property: connectionString
+    autoDeploy: true
+    branch: main
+    rootDir: .
+
+# Database configuration
+databases:
+  - name: chatbot-nlu-db
+    plan: free
+    databaseName: chatbot_nlu
+    user: chatbot_user
+
+# Environment variables for all services
+envVars:
+  - key: CORS_ORIGIN
+    value: https://chatbot-nlu-frontend.onrender.com
+  - key: CLIENT_URL  
+    value: https://chatbot-nlu-frontend.onrender.com
+  - key: API_URL
+    value: https://chatbot-nlu-backend.onrender.com

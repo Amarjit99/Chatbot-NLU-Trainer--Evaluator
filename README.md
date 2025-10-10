@@ -40,6 +40,77 @@
 
 ---
 
+## 🚀 **Quick Production Deployment**
+
+### ⚡ **One-Command Deployment**
+```bash
+# Clone and deploy in under 5 minutes
+git clone https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1.git
+cd chatbot-nlu-trainer-evaluator1
+
+# Quick setup with Docker (recommended)
+cp .env.production .env
+# Edit .env with your configuration
+./scripts/deploy.sh production
+
+# Access your application
+# Frontend: http://localhost
+# API: http://localhost:3001/api/health
+```
+
+### 🐳 **Docker Deployment Options**
+
+#### **Development Deployment**
+```bash
+# Start development environment
+docker-compose up -d
+```
+
+#### **Production Deployment**
+```bash
+# Full production setup with SSL, monitoring, and scaling
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+#### **Enterprise Deployment**
+```bash
+# Enterprise setup with MongoDB, Redis, and monitoring
+docker-compose -f docker-compose.prod.yml -f docker-compose.monitoring.yml up -d
+```
+
+### ⚙️ **Environment Configuration**
+
+| Environment | File | Purpose |
+|-------------|------|---------|
+| **Development** | `.env.example` | Local development |
+| **Staging** | `.env.staging` | Pre-production testing |
+| **Production** | `.env.production` | Live deployment |
+
+**Critical Production Settings:**
+```env
+# Security (MUST CHANGE)
+JWT_SECRET=your-64-character-secure-secret
+MONGO_URI=mongodb+srv://user:pass@cluster.mongodb.net/db
+HUGGINGFACE_API_KEY=your_api_key
+
+# Domain Configuration  
+CLIENT_URL=https://yourdomain.com
+CORS_ORIGIN=https://yourdomain.com
+```
+
+### 📋 **Deployment Checklist**
+- [ ] **Environment configured** with production values
+- [ ] **Database accessible** (MongoDB Atlas recommended)
+- [ ] **SSL certificates** installed (Let's Encrypt or custom)
+- [ ] **API keys obtained** (HuggingFace required)
+- [ ] **Domain/DNS configured** (if using custom domain)
+- [ ] **Firewall rules** configured correctly
+- [ ] **Health checks passing** (frontend & backend)
+
+For detailed deployment instructions, see **[📖 DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)**
+
+---
+
 ## 🌟 Key Features & Capabilities
 
 ### ✅ Production-Ready Features (Fully Implemented)

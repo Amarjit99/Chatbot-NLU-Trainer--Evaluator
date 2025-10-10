@@ -4,9 +4,9 @@
 
 **Complete Production Deployment Guide for Chatbot NLU Trainer & Evaluator**
 
-[![Production Ready](https://img.shields.io/badge/Production-Ready-green.svg)](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator)
-[![Docker Support](https://img.shields.io/badge/Docker-Supported-blue.svg)](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator)
-[![Multi-Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator)
+[![Production Ready](https://img.shields.io/badge/Production-Ready-green.svg)](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1)
+[![Docker Support](https://img.shields.io/badge/Docker-Supported-blue.svg)](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1)
+[![Multi-Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1)
 
 </div>
 
@@ -37,8 +37,8 @@
 ### 1. **Repository Setup**
 ```bash
 # Clone the repository
-git clone https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator.git
-cd chatbot-nlu-trainer-evaluator
+git clone https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1.git
+cd chatbot-nlu-trainer-evaluator1
 
 # Copy environment template
 cp .env.example .env

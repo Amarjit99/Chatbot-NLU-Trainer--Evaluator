@@ -4,8 +4,8 @@
 
 **Get up and running in under 5 minutes!**
 
-[![Quick Setup](https://img.shields.io/badge/Setup-5%20Minutes-green.svg)](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator)
-[![Beginner Friendly](https://img.shields.io/badge/Level-Beginner%20Friendly-brightgreen.svg)](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator)
+[![Quick Setup](https://img.shields.io/badge/Setup-5%20Minutes-green.svg)](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1)
+[![Beginner Friendly](https://img.shields.io/badge/Level-Beginner%20Friendly-brightgreen.svg)](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1)
 
 </div>
 
@@ -15,8 +15,8 @@
 
 ### Step 1: Clone & Setup
 ```bash
-git clone https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator.git
-cd chatbot-nlu-trainer-evaluator
+git clone https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1.git
+cd chatbot-nlu-trainer-evaluator1
 cp .env.example .env
 ```
 

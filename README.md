@@ -2,9 +2,9 @@
 
 <div align="center">
 
-[![GitHub license](https://img.shields.io/github/license/Amarjit99/chatbot-nlu-trainer-evaluator.svg)](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator/blob/main/LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/Amarjit99/chatbot-nlu-trainer-evaluator.svg)](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator/stargazers)
-[![GitHub issues](https://img.shields.io/github/issues/Amarjit99/chatbot-nlu-trainer-evaluator.svg)](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator/issues)
+[![GitHub license](https://img.shields.io/github/license/Amarjit99/chatbot-nlu-trainer-evaluator1.svg)](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1/blob/main/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/Amarjit99/chatbot-nlu-trainer-evaluator1.svg)](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/Amarjit99/chatbot-nlu-trainer-evaluator1.svg)](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1/issues)
 
 **A comprehensive full-stack training and evaluation platform with multi-backend Natural Language Understanding (NLU) support**
 
@@ -121,7 +121,7 @@
 
 ### 1. Clone Repository
 ```bash
-git clone https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator.git
+git clone https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1.git
 cd chatbot-nlu-trainer-evaluator
 ```
 
@@ -152,7 +152,7 @@ docker-compose up -d
 
 ### Step 1: Clone and Navigate to Project
 ```bash
-git clone https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator.git
+git clone https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1.git
 cd chatbot-nlu-trainer-evaluator
 ```
 
@@ -478,7 +478,7 @@ The frontend will start on `http://localhost:5173`
 ### Option 1: Docker Deployment (Recommended)
 ```bash
 # Clone and build
-git clone https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator.git
+git clone https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1.git
 cd chatbot-nlu-trainer-evaluator
 
 # Build and run containers
@@ -717,7 +717,7 @@ docker-compose up --build --force-recreate
 
 ```bash
 # Production deployment with Docker
-git clone https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator.git
+git clone https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1.git
 cd chatbot-nlu-trainer-evaluator
 
 # Configure environment
@@ -839,7 +839,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](./LICENSE
 
 ### Having Issues?
 1. Check the [Troubleshooting Guide](#-troubleshooting-guide)
-2. Search existing [GitHub Issues](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator/issues)
+2. Search existing [GitHub Issues](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1/issues)
 3. Create a new issue with detailed information
 
 ---

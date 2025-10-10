@@ -4,9 +4,9 @@
 
 **Master every feature of the most advanced NLU training platform**
 
-[![Feature Complete](https://img.shields.io/badge/Features-100%25%20Complete-green.svg)](https://github.com/Amarjit99/advanced-multi-backend-nlu-chatbot)
-[![Multi-Backend](https://img.shields.io/badge/Backends-HuggingFace%20%7C%20Rasa%20%7C%20spaCy-blue.svg)](https://github.com/Amarjit99/advanced-multi-backend-nlu-chatbot)
-[![User Friendly](https://img.shields.io/badge/Experience-User%20Friendly-brightgreen.svg)](https://github.com/Amarjit99/advanced-multi-backend-nlu-chatbot)
+[![Feature Complete](https://img.shields.io/badge/Features-100%25%20Complete-green.svg)](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator)
+[![Multi-Backend](https://img.shields.io/badge/Backends-HuggingFace%20%7C%20Rasa%20%7C%20spaCy-blue.svg)](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator)
+[![User Friendly](https://img.shields.io/badge/Experience-User%20Friendly-brightgreen.svg)](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator)
 
 </div>
 

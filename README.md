@@ -122,7 +122,7 @@
 ### 1. Clone Repository
 ```bash
 git clone https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator.git
-cd advanced-multi-backend-nlu-chatbot
+cd chatbot-nlu-trainer-evaluator
 ```
 
 ### 2. Configure Environment
@@ -153,7 +153,7 @@ docker-compose up -d
 ### Step 1: Clone and Navigate to Project
 ```bash
 git clone https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator.git
-cd advanced-multi-backend-nlu-chatbot
+cd chatbot-nlu-trainer-evaluator
 ```
 
 ### Step 2: Backend Setup
@@ -479,7 +479,7 @@ The frontend will start on `http://localhost:5173`
 ```bash
 # Clone and build
 git clone https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator.git
-cd advanced-multi-backend-nlu-chatbot
+cd chatbot-nlu-trainer-evaluator
 
 # Build and run containers
 docker-compose up --build
@@ -718,7 +718,7 @@ docker-compose up --build --force-recreate
 ```bash
 # Production deployment with Docker
 git clone https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator.git
-cd advanced-multi-backend-nlu-chatbot
+cd chatbot-nlu-trainer-evaluator
 
 # Configure environment
 cp .env.example .env
@@ -850,9 +850,9 @@ This project is licensed under the **MIT License** - see the [LICENSE](./LICENSE
 
 Made with ❤️ for the NLU community
 
-![GitHub Stars](https://img.shields.io/github/stars/Amarjit99/advanced-multi-backend-nlu-chatbot?style=social)
-![GitHub Forks](https://img.shields.io/github/forks/Amarjit99/advanced-multi-backend-nlu-chatbot?style=social)
-![GitHub Issues](https://img.shields.io/github/issues/Amarjit99/advanced-multi-backend-nlu-chatbot)
+![GitHub Stars](https://img.shields.io/github/stars/Amarjit99/chatbot-nlu-trainer-evaluator?style=social)
+![GitHub Forks](https://img.shields.io/github/forks/Amarjit99/chatbot-nlu-trainer-evaluator?style=social)
+![GitHub Issues](https://img.shields.io/github/issues/Amarjit99/chatbot-nlu-trainer-evaluator)
 
 </div>
 

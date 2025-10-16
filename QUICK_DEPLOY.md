@@ -117,8 +117,8 @@ chmod +x deploy.sh
 
 ## 📞 Support
 
-- **GitHub Issues**: [Report issues](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1/issues)
-- **Documentation**: [Full guides](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1)
+- **GitHub Issues**: [Report issues](https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator/issues)
+- **Documentation**: [Full guides](https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator)
 - **Deployment Guide**: [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)
 
 **🎉 Happy Deploying!**

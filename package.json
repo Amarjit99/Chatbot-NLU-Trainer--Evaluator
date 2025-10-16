@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1.git"
+    "url": "git+https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator.git"
   },
   "keywords": [
     "nlu",
@@ -35,9 +35,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1/issues"
+    "url": "https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator/issues"
   },
-  "homepage": "https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1#readme",
+  "homepage": "https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator#readme",
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=8.0.0"

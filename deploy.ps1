@@ -2,7 +2,7 @@
 # ==============================================================
 # PowerShell deployment script for Windows users
 # Author: Amarjit Kumar
-# Repository: https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1
+# Repository: https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator
 
 param(
     [Parameter(Position=0)]

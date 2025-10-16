@@ -1,12 +1,12 @@
-"""
-🤖 Chatbot NLU Trainer & Evaluator - Streamlit Demo
+﻿"""
+ðŸ¤– Chatbot NLU Trainer & Evaluator - Streamlit Demo
 ==================================================
 
 A simplified Streamlit interface for the Chatbot NLU Trainer & Evaluator.
 This demo showcases the key features in a free-tier hosting environment.
 
 Author: Amarjit Kumar
-Repository: https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1
+Repository: https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator
 """
 
 import streamlit as st
@@ -21,8 +21,8 @@ from typing import Dict, List, Any
 
 # Page config
 st.set_page_config(
-    page_title="🤖 Chatbot NLU Trainer & Evaluator",
-    page_icon="🤖",
+    page_title="ðŸ¤– Chatbot NLU Trainer & Evaluator",
+    page_icon="ðŸ¤–",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -69,23 +69,23 @@ st.markdown("""
 # Main header
 st.markdown("""
 <div class="main-header">
-    <h1>🤖 Chatbot NLU Trainer & Evaluator</h1>
+    <h1>ðŸ¤– Chatbot NLU Trainer & Evaluator</h1>
     <p>Advanced Natural Language Understanding Training Platform</p>
 </div>
 """, unsafe_allow_html=True)
 
 # Sidebar navigation
-st.sidebar.title("🚀 Navigation")
+st.sidebar.title("ðŸš€ Navigation")
 page = st.sidebar.selectbox(
     "Choose a feature:",
     [
-        "🏠 Home",
-        "🤖 NLU Training Demo",
-        "📊 Model Evaluation",
-        "🏷️ Entity Annotation",
-        "📈 Analytics Dashboard",
-        "🔧 API Testing",
-        "📚 Documentation"
+        "ðŸ  Home",
+        "ðŸ¤– NLU Training Demo",
+        "ðŸ“Š Model Evaluation",
+        "ðŸ·ï¸ Entity Annotation",
+        "ðŸ“ˆ Analytics Dashboard",
+        "ðŸ”§ API Testing",
+        "ðŸ“š Documentation"
     ]
 )
 
@@ -143,54 +143,54 @@ def simulate_training(training_data, backend="huggingface"):
     return results
 
 # Page routing
-if page == "🏠 Home":
+if page == "ðŸ  Home":
     # Project overview
     col1, col2 = st.columns([2, 1])
     
     with col1:
         st.markdown("""
-        ## 🌟 Welcome to Chatbot NLU Trainer & Evaluator
+        ## ðŸŒŸ Welcome to Chatbot NLU Trainer & Evaluator
         
         This is a **production-ready NLU training platform** that supports multiple backends 
         and provides advanced features for training, evaluating, and deploying chatbot models.
         
-        ### ✨ Key Features:
-        - 🔐 **Secure Authentication** with JWT tokens
-        - 🏢 **Multi-Workspace Support** for project organization
-        - 🤖 **Multi-Backend Training** (HuggingFace, Rasa, spaCy)
-        - 🎯 **Active Learning** with uncertainty-based sampling
-        - 🏷️ **Entity Annotation** tools for NER training
-        - 📊 **Advanced Analytics** and model comparison
-        - 🐳 **Docker Deployment** ready for production
+        ### âœ¨ Key Features:
+        - ðŸ” **Secure Authentication** with JWT tokens
+        - ðŸ¢ **Multi-Workspace Support** for project organization
+        - ðŸ¤– **Multi-Backend Training** (HuggingFace, Rasa, spaCy)
+        - ðŸŽ¯ **Active Learning** with uncertainty-based sampling
+        - ðŸ·ï¸ **Entity Annotation** tools for NER training
+        - ðŸ“Š **Advanced Analytics** and model comparison
+        - ðŸ³ **Docker Deployment** ready for production
         """)
         
         # GitHub link
         st.markdown("""
-        ### 🔗 Project Repository
-        **GitHub**: [chatbot-nlu-trainer-evaluator1](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1)
+        ### ðŸ”— Project Repository
+        **GitHub**: [Chatbot-NLU-Trainer--Evaluator](https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator)
         """)
     
     with col2:
         st.markdown("""
         <div class="feature-card">
-            <h3>🚀 Production Ready</h3>
+            <h3>ðŸš€ Production Ready</h3>
             <p>100% complete with Docker deployment</p>
         </div>
         
         <div class="feature-card">
-            <h3>🔧 Multi-Backend</h3>
+            <h3>ðŸ”§ Multi-Backend</h3>
             <p>HuggingFace, Rasa, spaCy integration</p>
         </div>
         
         <div class="feature-card">
-            <h3>📊 Analytics</h3>
+            <h3>ðŸ“Š Analytics</h3>
             <p>Comprehensive model evaluation</p>
         </div>
         """, unsafe_allow_html=True)
     
     # Technology stack
     st.markdown("---")
-    st.markdown("## 🛠️ Technology Stack")
+    st.markdown("## ðŸ› ï¸ Technology Stack")
     
     tech_cols = st.columns(4)
     
@@ -226,8 +226,8 @@ if page == "🏠 Home":
         - PM2 Process Manager
         """)
 
-elif page == "🤖 NLU Training Demo":
-    st.header("🤖 NLU Model Training Demo")
+elif page == "ðŸ¤– NLU Training Demo":
+    st.header("ðŸ¤– NLU Model Training Demo")
     
     # Load sample data
     sample_data = load_sample_data()
@@ -235,14 +235,14 @@ elif page == "🤖 NLU Training Demo":
     col1, col2 = st.columns([1, 1])
     
     with col1:
-        st.subheader("📝 Training Data")
+        st.subheader("ðŸ“ Training Data")
         
         # Display sample training data
         training_df = pd.DataFrame(sample_data["training_data"])
         st.dataframe(training_df, use_container_width=True)
         
         # Backend selection
-        st.subheader("🔧 Training Configuration")
+        st.subheader("ðŸ”§ Training Configuration")
         backend = st.selectbox(
             "Select NLU Backend:",
             ["huggingface", "rasa", "spacy"],
@@ -254,12 +254,12 @@ elif page == "🤖 NLU Training Demo":
         batch_size = st.selectbox("Batch Size", [8, 16, 32], index=1)
         
         # Train button
-        if st.button("🚀 Start Training"):
-            st.subheader("📈 Training Progress")
+        if st.button("ðŸš€ Start Training"):
+            st.subheader("ðŸ“ˆ Training Progress")
             results = simulate_training(sample_data["training_data"], backend)
             
             # Display results
-            st.success("✅ Training completed successfully!")
+            st.success("âœ… Training completed successfully!")
             
             # Metrics display
             metrics_cols = st.columns(4)
@@ -273,7 +273,7 @@ elif page == "🤖 NLU Training Demo":
                 st.metric("F1 Score", f"{results['f1_score']:.2%}")
     
     with col2:
-        st.subheader("🎯 Model Testing")
+        st.subheader("ðŸŽ¯ Model Testing")
         
         # Text input for testing
         test_text = st.text_area(
@@ -282,7 +282,7 @@ elif page == "🤖 NLU Training Demo":
             height=100
         )
         
-        if st.button("🔍 Predict Intent"):
+        if st.button("ðŸ” Predict Intent"):
             # Simulated prediction
             predictions = {
                 "intent": "book_flight",
@@ -293,7 +293,7 @@ elif page == "🤖 NLU Training Demo":
                 ]
             }
             
-            st.subheader("📊 Prediction Results")
+            st.subheader("ðŸ“Š Prediction Results")
             
             # Intent prediction
             st.markdown(f"**Predicted Intent:** `{predictions['intent']}`")
@@ -304,7 +304,7 @@ elif page == "🤖 NLU Training Demo":
             for entity in predictions["entities"]:
                 st.markdown(f"- `{entity['entity']}`: {entity['value']} ({entity['confidence']:.2%})")
         
-        st.subheader("📈 Intent Distribution")
+        st.subheader("ðŸ“ˆ Intent Distribution")
         
         # Simulated intent distribution chart
         intent_data = pd.DataFrame({
@@ -316,14 +316,14 @@ elif page == "🤖 NLU Training Demo":
                     title="Training Data Intent Distribution")
         st.plotly_chart(fig, use_container_width=True)
 
-elif page == "📊 Model Evaluation":
-    st.header("📊 Model Performance Evaluation")
+elif page == "ðŸ“Š Model Evaluation":
+    st.header("ðŸ“Š Model Performance Evaluation")
     
     # Simulated evaluation data
     col1, col2 = st.columns([1, 1])
     
     with col1:
-        st.subheader("🎯 Classification Metrics")
+        st.subheader("ðŸŽ¯ Classification Metrics")
         
         # Create confusion matrix data
         confusion_data = {
@@ -343,7 +343,7 @@ elif page == "📊 Model Evaluation":
         st.dataframe(metrics_data, use_container_width=True)
         
         # Overall metrics
-        st.markdown("### 📈 Overall Performance")
+        st.markdown("### ðŸ“ˆ Overall Performance")
         overall_cols = st.columns(3)
         with overall_cols[0]:
             st.metric("Overall Accuracy", "92.4%", "2.1%")
@@ -353,7 +353,7 @@ elif page == "📊 Model Evaluation":
             st.metric("Training Time", "2.3s", "-0.5s")
     
     with col2:
-        st.subheader("📈 Performance Visualization")
+        st.subheader("ðŸ“ˆ Performance Visualization")
         
         # Performance comparison chart
         fig = go.Figure()
@@ -392,7 +392,7 @@ elif page == "📊 Model Evaluation":
         st.plotly_chart(fig, use_container_width=True)
         
         # Model comparison
-        st.subheader("🔄 Backend Comparison")
+        st.subheader("ðŸ”„ Backend Comparison")
         comparison_data = pd.DataFrame({
             "Backend": ["HuggingFace", "Rasa", "spaCy"],
             "Accuracy": [94.2, 91.8, 89.5],
@@ -402,8 +402,8 @@ elif page == "📊 Model Evaluation":
         
         st.dataframe(comparison_data, use_container_width=True)
 
-elif page == "🏷️ Entity Annotation":
-    st.header("🏷️ Entity Annotation Interface")
+elif page == "ðŸ·ï¸ Entity Annotation":
+    st.header("ðŸ·ï¸ Entity Annotation Interface")
     
     st.markdown("""
     This interface allows you to annotate entities in text for Named Entity Recognition (NER) training.
@@ -412,7 +412,7 @@ elif page == "🏷️ Entity Annotation":
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        st.subheader("📝 Text Annotation")
+        st.subheader("ðŸ“ Text Annotation")
         
         # Sample text for annotation
         sample_texts = [
@@ -434,7 +434,7 @@ elif page == "🏷️ Entity Annotation":
             default=["PERSON", "LOCATION", "TIME", "NUMBER"]
         )
         
-        if st.button("🔍 Auto-Detect Entities"):
+        if st.button("ðŸ” Auto-Detect Entities"):
             # Simulated entity detection
             entities = [
                 {"text": "New York", "label": "LOCATION", "start": 26, "end": 34},
@@ -442,12 +442,12 @@ elif page == "🏷️ Entity Annotation":
                 {"text": "3 PM", "label": "TIME", "start": 47, "end": 51}
             ]
             
-            st.subheader("🎯 Detected Entities")
+            st.subheader("ðŸŽ¯ Detected Entities")
             for entity in entities:
-                st.markdown(f"- **{entity['text']}** → `{entity['label']}` (Position: {entity['start']}-{entity['end']})")
+                st.markdown(f"- **{entity['text']}** â†’ `{entity['label']}` (Position: {entity['start']}-{entity['end']})")
     
     with col2:
-        st.subheader("📊 Annotation Statistics")
+        st.subheader("ðŸ“Š Annotation Statistics")
         
         # Annotation stats
         stats_data = pd.DataFrame({
@@ -463,8 +463,8 @@ elif page == "🏷️ Entity Annotation":
                     title="Entity Distribution in Dataset")
         st.plotly_chart(fig, use_container_width=True)
 
-elif page == "📈 Analytics Dashboard":
-    st.header("📈 Analytics Dashboard")
+elif page == "ðŸ“ˆ Analytics Dashboard":
+    st.header("ðŸ“ˆ Analytics Dashboard")
     
     # Dashboard metrics
     col1, col2, col3, col4 = st.columns(4)
@@ -507,7 +507,7 @@ elif page == "📈 Analytics Dashboard":
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("📊 Training Activity")
+        st.subheader("ðŸ“Š Training Activity")
         
         # Training activity over time
         dates = pd.date_range(start="2024-01-01", end="2024-12-31", freq="M")
@@ -521,7 +521,7 @@ elif page == "📈 Analytics Dashboard":
         st.plotly_chart(fig, use_container_width=True)
     
     with col2:
-        st.subheader("🎯 Model Performance Distribution")
+        st.subheader("ðŸŽ¯ Model Performance Distribution")
         
         # Performance distribution
         import numpy as np
@@ -535,8 +535,8 @@ elif page == "📈 Analytics Dashboard":
         fig.update_yaxis(title="Number of Models")
         st.plotly_chart(fig, use_container_width=True)
 
-elif page == "🔧 API Testing":
-    st.header("🔧 API Testing Interface")
+elif page == "ðŸ”§ API Testing":
+    st.header("ðŸ”§ API Testing Interface")
     
     st.markdown("""
     Test the REST API endpoints of the Chatbot NLU Trainer & Evaluator.
@@ -563,7 +563,7 @@ elif page == "🔧 API Testing":
     col1, col2 = st.columns([1, 1])
     
     with col1:
-        st.subheader("🔗 API Endpoints")
+        st.subheader("ðŸ”— API Endpoints")
         
         category = st.selectbox("Select Category:", list(endpoints.keys()))
         endpoint = st.selectbox("Select Endpoint:", list(endpoints[category].keys()))
@@ -571,7 +571,7 @@ elif page == "🔧 API Testing":
         st.markdown(f"**Description:** {endpoints[category][endpoint]}")
         
         # Request configuration
-        st.subheader("📝 Request Configuration")
+        st.subheader("ðŸ“ Request Configuration")
         method = endpoint.split(" ")[0]
         url = endpoint.split(" ")[1]
         
@@ -587,7 +587,7 @@ elif page == "🔧 API Testing":
         # API key input
         api_key = st.text_input("API Key (if required):", type="password")
         
-        if st.button("🚀 Send Request"):
+        if st.button("ðŸš€ Send Request"):
             # Simulated API response
             if "predict" in url:
                 response = {
@@ -605,21 +605,21 @@ elif page == "🔧 API Testing":
                     "data": {"example": "response"}
                 }
             
-            st.subheader("📤 Response")
+            st.subheader("ðŸ“¤ Response")
             st.code(json.dumps(response, indent=2))
     
     with col2:
-        st.subheader("📖 API Documentation")
+        st.subheader("ðŸ“– API Documentation")
         
         st.markdown("""
-        ### 🔐 Authentication
+        ### ðŸ” Authentication
         
         All API requests require JWT authentication:
         ```
         Authorization: Bearer <your_jwt_token>
         ```
         
-        ### 📋 Response Format
+        ### ðŸ“‹ Response Format
         
         All responses follow this structure:
         ```json
@@ -630,7 +630,7 @@ elif page == "🔧 API Testing":
         }
         ```
         
-        ### ⚠️ Error Handling
+        ### âš ï¸ Error Handling
         
         Error responses include:
         ```json
@@ -642,16 +642,16 @@ elif page == "🔧 API Testing":
         ```
         """)
         
-        st.subheader("🔗 Full API Documentation")
-        st.markdown("[View Complete API Docs](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1)")
+        st.subheader("ðŸ”— Full API Documentation")
+        st.markdown("[View Complete API Docs](https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator)")
 
-elif page == "📚 Documentation":
-    st.header("📚 Project Documentation")
+elif page == "ðŸ“š Documentation":
+    st.header("ðŸ“š Project Documentation")
     
     # Documentation sections
     doc_sections = [
         {
-            "title": "🚀 Quick Start Guide",
+            "title": "ðŸš€ Quick Start Guide",
             "content": """
             ### Prerequisites
             - Docker & Docker Compose
@@ -660,8 +660,8 @@ elif page == "📚 Documentation":
             
             ### Installation
             ```bash
-            git clone https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1.git
-            cd chatbot-nlu-trainer-evaluator1
+            git clone https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator.git
+            cd Chatbot-NLU-Trainer--Evaluator
             cp .env.example .env
             docker-compose up -d
             ```
@@ -672,7 +672,7 @@ elif page == "📚 Documentation":
             """
         },
         {
-            "title": "🏗️ Architecture Overview",
+            "title": "ðŸ—ï¸ Architecture Overview",
             "content": """
             ### System Components
             - **Frontend**: React + Vite application
@@ -688,7 +688,7 @@ elif page == "📚 Documentation":
             """
         },
         {
-            "title": "🔧 Configuration",
+            "title": "ðŸ”§ Configuration",
             "content": """
             ### Environment Variables
             ```env
@@ -704,7 +704,7 @@ elif page == "📚 Documentation":
             """
         },
         {
-            "title": "📊 API Reference",
+            "title": "ðŸ“Š API Reference",
             "content": """
             ### Authentication Endpoints
             - `POST /api/auth/register` - User registration
@@ -730,40 +730,40 @@ elif page == "📚 Documentation":
     
     # External links
     st.markdown("---")
-    st.markdown("### 🔗 Additional Resources")
+    st.markdown("### ðŸ”— Additional Resources")
     
     col1, col2, col3 = st.columns(3)
     
     with col1:
         st.markdown("""
-        **📂 Repository**
-        - [GitHub Repository](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1)
-        - [Issues](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1/issues)
-        - [Releases](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1/releases)
+        **ðŸ“‚ Repository**
+        - [GitHub Repository](https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator)
+        - [Issues](https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator/issues)
+        - [Releases](https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator/releases)
         """)
     
     with col2:
         st.markdown("""
-        **📖 Documentation**
-        - [User Guide](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1/blob/main/USER_GUIDE.md)
-        - [Deployment Guide](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1/blob/main/DEPLOYMENT_GUIDE.md)
-        - [Quick Start](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1/blob/main/QUICK_START.md)
+        **ðŸ“– Documentation**
+        - [User Guide](https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator/blob/main/USER_GUIDE.md)
+        - [Deployment Guide](https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator/blob/main/DEPLOYMENT_GUIDE.md)
+        - [Quick Start](https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator/blob/main/QUICK_START.md)
         """)
     
     with col3:
         st.markdown("""
-        **🛠️ Development**
-        - [Contributing Guide](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1/blob/main/CONTRIBUTING.md)
-        - [Code of Conduct](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1/blob/main/CODE_OF_CONDUCT.md)
-        - [License](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1/blob/main/LICENSE)
+        **ðŸ› ï¸ Development**
+        - [Contributing Guide](https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator/blob/main/CONTRIBUTING.md)
+        - [Code of Conduct](https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator/blob/main/CODE_OF_CONDUCT.md)
+        - [License](https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator/blob/main/LICENSE)
         """)
 
 # Footer
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #666; padding: 1rem;">
-    <p>🤖 <strong>Chatbot NLU Trainer & Evaluator</strong> | Built with ❤️ by Amarjit Kumar</p>
-    <p>⭐ <a href="https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1" target="_blank">Star on GitHub</a> | 
-    📚 <a href="https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1/blob/main/README.md" target="_blank">Documentation</a></p>
+    <p>ðŸ¤– <strong>Chatbot NLU Trainer & Evaluator</strong> | Built with â¤ï¸ by Amarjit Kumar</p>
+    <p>â­ <a href="https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator" target="_blank">Star on GitHub</a> | 
+    ðŸ“š <a href="https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator/blob/main/README.md" target="_blank">Documentation</a></p>
 </div>
 """, unsafe_allow_html=True)

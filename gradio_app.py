@@ -6,7 +6,7 @@ A Gradio-based interface for the Chatbot NLU Trainer & Evaluator.
 Optimized for Hugging Face Spaces free-tier deployment.
 
 Author: Amarjit Kumar
-Repository: https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1
+Repository: https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator
 """
 
 import gradio as gr
@@ -236,7 +236,7 @@ This is a comprehensive Natural Language Understanding training platform that su
 - **Deployment**: Docker + Compose, production-ready
 
 ### 🔗 Links:
-- **GitHub Repository**: [chatbot-nlu-trainer-evaluator1](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1)
+- **GitHub Repository**: [Chatbot-NLU-Trainer--Evaluator](https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator)
 - **Documentation**: Complete guides available in repository
 - **Live Demo**: This Hugging Face Space
 
@@ -270,7 +270,7 @@ def create_gradio_app():
         <div class="header-text">
             <h1>🤖 Chatbot NLU Trainer & Evaluator</h1>
             <p>Advanced Natural Language Understanding Training Platform</p>
-            <p><a href="https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1" target="_blank" style="color: white;">⭐ GitHub Repository</a></p>
+            <p><a href="https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator" target="_blank" style="color: white;">⭐ GitHub Repository</a></p>
         </div>
         """)
         
@@ -495,7 +495,7 @@ def create_gradio_app():
                 ```
                 
                 ### 🚀 Getting Started
-                1. Clone the repository: [GitHub Link](https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1)
+                1. Clone the repository: [GitHub Link](https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator)
                 2. Follow setup instructions in README.md
                 3. Use Docker for easy deployment: `docker-compose up -d`
                 4. Access the full application at `http://localhost`
@@ -506,9 +506,9 @@ def create_gradio_app():
         <div style="text-align: center; margin-top: 2rem; padding: 1rem; background-color: #f8f9fa; border-radius: 10px;">
             <p><strong>🤖 Chatbot NLU Trainer & Evaluator</strong> | Built with ❤️ by Amarjit Kumar</p>
             <p>
-                <a href="https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1" target="_blank">⭐ GitHub</a> | 
-                <a href="https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1/blob/main/README.md" target="_blank">📚 Documentation</a> |
-                <a href="https://github.com/Amarjit99/chatbot-nlu-trainer-evaluator1/blob/main/DEPLOYMENT_GUIDE.md" target="_blank">🚀 Deployment Guide</a>
+                <a href="https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator" target="_blank">⭐ GitHub</a> | 
+                <a href="https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator/blob/main/README.md" target="_blank">📚 Documentation</a> |
+                <a href="https://github.com/Amarjit99/Chatbot-NLU-Trainer--Evaluator/blob/main/DEPLOYMENT_GUIDE.md" target="_blank">🚀 Deployment Guide</a>
             </p>
         </div>
         """)

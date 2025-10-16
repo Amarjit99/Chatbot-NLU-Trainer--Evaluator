@@ -1,0 +1,11 @@
+text,intent,entities
+"I want to book a flight to Paris","book_flight","[{""text"":""Paris"",""label"":""LOCATION"",""start"":24,""end"":29}]"
+"Find restaurants near me","find_restaurant","[]"
+"Book a table for dinner","book_table","[{""text"":""dinner"",""label"":""TIME"",""start"":18,""end"":24}]"
+"What's the weather today","check_weather","[{""text"":""today"",""label"":""DATE"",""start"":19,""end"":24}]"
+"Call a taxi now","book_taxi","[{""text"":""now"",""label"":""TIME"",""start"":12,""end"":15}]"
+"Order pizza for lunch","order_food","[{""text"":""pizza"",""label"":""FOOD"",""start"":6,""end"":11},{""text"":""lunch"",""label"":""TIME"",""start"":16,""end"":21}]"
+"Book hotel in London","book_hotel","[{""text"":""London"",""label"":""LOCATION"",""start"":14,""end"":20}]"
+"Cancel my booking","cancel_booking","[]"
+"Set alarm for 9 AM","set_alarm","[{""text"":""9 AM"",""label"":""TIME"",""start"":14,""end"":18}]"
+"Play rock music","play_music","[{""text"":""rock"",""label"":""MUSIC_GENRE"",""start"":5,""end"":9}]"

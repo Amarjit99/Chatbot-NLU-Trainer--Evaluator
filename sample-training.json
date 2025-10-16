@@ -1,0 +1,125 @@
+[
+  {
+    "text": "I want to book a flight to New York tomorrow",
+    "intent": "book_flight",
+    "entities": [
+      {"text": "New York", "label": "LOCATION", "start": 24, "end": 32},
+      {"text": "tomorrow", "label": "DATE", "start": 33, "end": 41}
+    ]
+  },
+  {
+    "text": "Find me a restaurant in Chennai for dinner",
+    "intent": "find_restaurant",
+    "entities": [
+      {"text": "Chennai", "label": "LOCATION", "start": 20, "end": 27},
+      {"text": "dinner", "label": "TIME", "start": 32, "end": 38}
+    ]
+  },
+  {
+    "text": "Book a table for 4 people at 8 PM today",
+    "intent": "book_table",
+    "entities": [
+      {"text": "4", "label": "NUMBER", "start": 17, "end": 18},
+      {"text": "8 PM", "label": "TIME", "start": 30, "end": 34},
+      {"text": "today", "label": "DATE", "start": 35, "end": 40}
+    ]
+  },
+  {
+    "text": "What's the weather like in Mumbai right now?",
+    "intent": "check_weather",
+    "entities": [
+      {"text": "Mumbai", "label": "LOCATION", "start": 27, "end": 33},
+      {"text": "right now", "label": "TIME", "start": 34, "end": 43}
+    ]
+  },
+  {
+    "text": "I need a taxi to the airport by 3 o'clock",
+    "intent": "book_taxi",
+    "entities": [
+      {"text": "airport", "label": "LOCATION", "start": 17, "end": 24},
+      {"text": "3 o'clock", "label": "TIME", "start": 28, "end": 37}
+    ]
+  },
+  {
+    "text": "Order chicken biryani for lunch",
+    "intent": "order_food",
+    "entities": [
+      {"text": "chicken biryani", "label": "FOOD", "start": 6, "end": 21},
+      {"text": "lunch", "label": "TIME", "start": 26, "end": 31}
+    ]
+  },
+  {
+    "text": "Hotel booking in Bangalore for 2 nights starting December 15",
+    "intent": "book_hotel",
+    "entities": [
+      {"text": "Bangalore", "label": "LOCATION", "start": 17, "end": 26},
+      {"text": "2", "label": "NUMBER", "start": 31, "end": 32},
+      {"text": "December 15", "label": "DATE", "start": 50, "end": 61}
+    ]
+  },
+  {
+    "text": "Cancel my flight booking for tomorrow morning",
+    "intent": "cancel_flight",
+    "entities": [
+      {"text": "tomorrow morning", "label": "TIME", "start": 29, "end": 45}
+    ]
+  },
+  {
+    "text": "Set an alarm for 7 AM tomorrow",
+    "intent": "set_alarm",
+    "entities": [
+      {"text": "7 AM", "label": "TIME", "start": 17, "end": 21},
+      {"text": "tomorrow", "label": "DATE", "start": 22, "end": 30}
+    ]
+  },
+  {
+    "text": "Play some jazz music for the party tonight",
+    "intent": "play_music",
+    "entities": [
+      {"text": "jazz", "label": "MUSIC_GENRE", "start": 10, "end": 14},
+      {"text": "tonight", "label": "TIME", "start": 36, "end": 43}
+    ]
+  },
+  {
+    "text": "Send $50 to John Smith via PayPal",
+    "intent": "send_money",
+    "entities": [
+      {"text": "$50", "label": "MONEY", "start": 5, "end": 8},
+      {"text": "John Smith", "label": "PERSON", "start": 12, "end": 22},
+      {"text": "PayPal", "label": "ORGANIZATION", "start": 27, "end": 33}
+    ]
+  },
+  {
+    "text": "What time does Apple Store close on Sunday?",
+    "intent": "get_hours",
+    "entities": [
+      {"text": "Apple Store", "label": "ORGANIZATION", "start": 15, "end": 26},
+      {"text": "Sunday", "label": "DATE", "start": 36, "end": 42}
+    ]
+  },
+  {
+    "text": "Turn on the lights in the living room",
+    "intent": "smart_home",
+    "entities": [
+      {"text": "lights", "label": "DEVICE", "start": 12, "end": 18},
+      {"text": "living room", "label": "LOCATION", "start": 26, "end": 37}
+    ]
+  },
+  {
+    "text": "Remind me to call mom at 5 PM today",
+    "intent": "set_reminder",
+    "entities": [
+      {"text": "call mom", "label": "TASK", "start": 13, "end": 21},
+      {"text": "5 PM", "label": "TIME", "start": 25, "end": 29},
+      {"text": "today", "label": "DATE", "start": 30, "end": 35}
+    ]
+  },
+  {
+    "text": "Navigate to Google headquarters in Mountain View",
+    "intent": "navigation",
+    "entities": [
+      {"text": "Google headquarters", "label": "ORGANIZATION", "start": 12, "end": 31},
+      {"text": "Mountain View", "label": "LOCATION", "start": 35, "end": 48}
+    ]
+  }
+]

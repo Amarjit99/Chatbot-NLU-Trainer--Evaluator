@@ -1,0 +1,44 @@
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+startCommand = "npm start"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+
+[env]
+NODE_ENV = "production"
+PORT = "3001"
+
+[[services]]
+name = "backend"
+source = "./backend"
+
+[services.build]
+buildCommand = "npm ci"
+
+[services.deploy]
+startCommand = "npm start"
+healthcheckPath = "/api/health"
+
+[[services]]
+name = "frontend"  
+source = "./frontend"
+
+[services.build]
+buildCommand = "npm ci && npm run build"
+
+[services.deploy]
+startCommand = "npm run preview"
+
+# Database configuration for Railway PostgreSQL
+[database]
+type = "postgresql"
+# Railway will automatically provide DATABASE_URL
+
+# Volume mounts for persistent storage
+[volumes]
+uploads = "./backend/uploads"
+models = "./backend/models"

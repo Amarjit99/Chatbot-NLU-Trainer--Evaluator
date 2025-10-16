@@ -1,0 +1,59 @@
+.app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+  /* keep this minimal; AnimatedBackground will provide the page background */
+  background: transparent;
+  position: relative;
+  z-index: 10; /* ensure app UI sits above animated background */
+  font-family: Arial, sans-serif;
+}
+
+/* Theme variables - light and dark modes */
+:root{
+  --ui-bg: #ffffff;
+  --ui-contrast: #1e293b;
+  --muted: #64748b;
+  --accent: #6366f1;
+}
+
+.theme-dark{
+  --ui-bg: #0b1222;
+  --ui-contrast: #e6eefc;
+  --muted: #94a3b8;
+  --accent: #7c3aed;
+}
+
+.app { background: var(--ui-bg); color: var(--ui-contrast); }
+
+/* set background/animation vars per theme so AnimatedBackground can pick them */
+.theme-light { --bg-1: #667eea; --bg-2: #7748a5; --accent: #8b5cf6; }
+.theme-dark  { --bg-1: #2b2f5a; --bg-2: #1b2540; --accent: #7c3aed; }
+
+/* When the animated background is disabled we restore the original gradient across the project body */
+.app.bg-animated-off {
+  background: linear-gradient(to right, #667eea, #7748a5);
+}
+
+/* When animation is on, ensure the root has transparent background so the AnimatedBackground shows through */
+.app.bg-animated-on {
+  background: transparent;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .app {
+    padding: 0.5rem;
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app {
+    padding: 0.25rem;
+    padding-top: 1rem;
+  }
+}

@@ -1,0 +1,7 @@
+.theme-toggle{ position: fixed; top: 12px; right: 60px; z-index: 60; pointer-events: auto }
+.theme-toggle .switch{ display:inline-block; width:48px; height:26px; position:relative }
+.theme-toggle .switch input{display:none}
+.theme-toggle .slider{ position:absolute; inset:0; background: rgba(255,255,255,0.12); border-radius: 999px; transition: .2s }
+.theme-toggle .slider:before{ content:''; position:absolute; left:4px; top:4px; width:18px; height:18px; background:white; border-radius:50%; transition:.2s }
+.theme-toggle .switch input:checked + .slider{ background: linear-gradient(135deg,#1e293b,#4b5563) }
+.theme-toggle .switch input:checked + .slider:before{ transform: translateX(22px); background: #ffd54f }

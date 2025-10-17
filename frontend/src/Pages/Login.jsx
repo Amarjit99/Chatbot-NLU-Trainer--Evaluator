@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react'
+﻿import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
+import ReCAPTCHA from 'react-google-recaptcha'
 import { FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi'
+import { RECAPTCHA_SITE_KEY } from '../config/recaptcha'
 import './Login.css'
 
-// Configure axios defaults
 axios.defaults.withCredentials = true
 axios.defaults.timeout = 10000
 
@@ -12,15 +13,16 @@ function Login({ goToSignup, onLoginSuccess }) {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [recaptchaToken, setRecaptchaToken] = useState(null)
+  const recaptchaRef = useRef(null)
 
-  // Debug logging for state changes
   React.useEffect(() => {
     console.log('🔍 Login state:', { email, passwordLength: password.length });
   }, [email, password]);
+  
   const typedRef = useRef(null)
 
   useEffect(() => {
-    // Try to load typed.js safely
     const initTyped = async () => {
       try {
         const { default: Typed } = await import('typed.js')
@@ -48,9 +50,13 @@ function Login({ goToSignup, onLoginSuccess }) {
     e.preventDefault()
     if (isSubmitting) return
     
-    // Basic validation
     if (!email.trim() || !password.trim()) {
       alert('Please fill in both email and password')
+      return
+    }
+
+    if (!recaptchaToken) {
+      alert('Please complete the reCAPTCHA verification')
       return
     }
     
@@ -62,6 +68,7 @@ function Login({ goToSignup, onLoginSuccess }) {
       const res = await axios.post('http://localhost:3001/api/auth/login', {
         email: email.trim(),
         password: password,
+        recaptchaToken: recaptchaToken,
       }, {
         headers: {
           'Content-Type': 'application/json'
@@ -73,7 +80,6 @@ function Login({ goToSignup, onLoginSuccess }) {
       console.log('✅ Login response:', res.data)
       if (res.status === 200 && res.data.token) {
         alert(`Welcome back, ${res.data.user.username}!`)
-        // Store token using helper
         try { const { setAuthToken } = await import('../utils/auth'); setAuthToken(res.data.token, true); } catch (e) { console.warn('Failed to persist token via helper', e); }
         if (typeof onLoginSuccess === 'function') {
           onLoginSuccess()
@@ -82,6 +88,11 @@ function Login({ goToSignup, onLoginSuccess }) {
         throw new Error('No token received from server')
       }
     } catch (err) {
+      if (recaptchaRef.current) {
+        recaptchaRef.current.reset()
+        setRecaptchaToken(null)
+      }
+      
       console.error('Login error:', err)
       const status = err?.response?.status
       const message = err?.response?.data?.message
@@ -101,6 +112,10 @@ function Login({ goToSignup, onLoginSuccess }) {
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword)
+  }
+
+  const handleRecaptchaChange = (token) => {
+    setRecaptchaToken(token)
   }
 
   return (
@@ -146,7 +161,18 @@ function Login({ goToSignup, onLoginSuccess }) {
             {showPassword ? <FiEyeOff /> : <FiEye />}
           </button>
         </div>
-        <button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Logging in...' : 'Login'}</button>
+        <div className="recaptcha-container">
+          <ReCAPTCHA
+            ref={recaptchaRef}
+            sitekey={RECAPTCHA_SITE_KEY}
+            onChange={handleRecaptchaChange}
+            onExpired={() => setRecaptchaToken(null)}
+            onErrored={() => setRecaptchaToken(null)}
+          />
+        </div>
+        <button type="submit" disabled={isSubmitting || !recaptchaToken}>
+          {isSubmitting ? 'Logging in...' : 'Login'}
+        </button>
       </form>
       <p>
         Don't have an account? <span onClick={goToSignup}>Sign up</span>

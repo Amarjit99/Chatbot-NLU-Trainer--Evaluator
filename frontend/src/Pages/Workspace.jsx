@@ -587,15 +587,25 @@ export default function Workspace({ goToLogin, darkMode, setDarkMode }) {
       return
     }
 
+    console.log('🚀 Starting Prediction:', {
+      text: utterance,
+      workspaceId: selectedWorkspace.id || selectedWorkspace._id,
+      workspace: selectedWorkspace
+    })
+
     setIsPredicting(true)
     setPredictionResult(null)
 
     try {
       // Try sessionStorage first (tab-specific), then localStorage
       const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken')
+      
+      const workspaceId = selectedWorkspace.id || selectedWorkspace._id
+      console.log('📡 Making prediction request with workspaceId:', workspaceId)
+      
       const response = await axios.post('http://localhost:3001/api/training/predict', {
         text: utterance,
-        workspaceId: selectedWorkspace.id
+        workspaceId: workspaceId
       }, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -603,10 +613,27 @@ export default function Workspace({ goToLogin, darkMode, setDarkMode }) {
         }
       })
 
+      console.log('✅ Prediction Response:', response.data)
       setPredictionResult(response.data)
     } catch (error) {
-      console.error('Prediction error:', error)
-      alert(error.response?.data?.message || 'Prediction failed')
+      console.error('❌ Prediction Error:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        workspaceId: selectedWorkspace.id || selectedWorkspace._id
+      })
+      
+      // Enhanced error message
+      let errorMsg = 'Prediction failed'
+      if (error.response?.data?.message) {
+        errorMsg = error.response.data.message
+      } else if (error.message === 'Network Error') {
+        errorMsg = 'Cannot connect to server. Make sure the backend is running on port 3001.'
+      } else if (error.response?.status === 404) {
+        errorMsg = 'Prediction endpoint not found. Check if the backend server is running.'
+      }
+      
+      alert(errorMsg)
     } finally {
       setIsPredicting(false)
     }

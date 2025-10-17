@@ -133,6 +133,13 @@ router.post('/predict', auth, async (req, res) => {
   try {
     const { text, workspaceId } = req.body;
 
+    console.log('📥 Prediction Request:', {
+      text: text?.substring(0, 50),
+      workspaceId,
+      hasText: !!text,
+      hasWorkspaceId: !!workspaceId
+    });
+
     if (!text || !workspaceId) {
       return res.status(400).json({ message: 'text and workspaceId are required' });
     }
@@ -140,6 +147,12 @@ router.post('/predict', auth, async (req, res) => {
     const predictionStartTime = Date.now();
     const prediction = await huggingfaceService.predictIntent(text, workspaceId);
     const predictionDuration = Date.now() - predictionStartTime;
+
+    console.log('✅ Prediction Success:', {
+      intent: prediction.predictedIntent,
+      confidence: `${(prediction.confidence * 100).toFixed(1)}%`,
+      duration: `${predictionDuration}ms`
+    });
 
     // Record prediction in analytics - Temporarily disabled
     // analyticsService.recordPrediction(
@@ -155,10 +168,16 @@ router.post('/predict', auth, async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Prediction error:', error);
+    console.error('❌ Prediction Error:', {
+      message: error.message,
+      stack: error.stack,
+      workspaceId: req.body.workspaceId
+    });
+    
     res.status(500).json({ 
-      message: 'Prediction failed',
-      error: error.message 
+      message: error.message || 'Prediction failed',
+      error: error.message,
+      workspaceId: req.body.workspaceId
     });
   }
 });

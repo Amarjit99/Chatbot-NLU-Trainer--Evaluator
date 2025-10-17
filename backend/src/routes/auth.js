@@ -6,6 +6,7 @@ import path from 'path';
 import fs from 'fs';
 import { User } from '../models/User.js';
 import { adminAuth, authenticateToken } from '../middleware/adminAuth.js';
+import { verifyRecaptcha } from '../utils/recaptchaVerify.js';
 
 const router = express.Router();
 
@@ -42,12 +43,25 @@ const upload = multer({
 router.post('/register', async (req, res) => {
   try {
     console.log('📝 Registration attempt:', { body: req.body });
-    const { username, email, password } = req.body || {};
+    const { username, email, password, recaptchaToken } = req.body || {};
 
     // Enhanced validation
     if (!username || !email || !password) {
       console.log('❌ Missing required fields');
       return res.status(400).json({ message: 'username, email and password are required' });
+    }
+
+    // Verify reCAPTCHA
+    if (recaptchaToken) {
+      const isRecaptchaValid = await verifyRecaptcha(recaptchaToken);
+      if (!isRecaptchaValid) {
+        console.log('❌ reCAPTCHA verification failed');
+        return res.status(400).json({ message: 'reCAPTCHA verification failed. Please try again.' });
+      }
+    } else {
+      console.log('⚠️  No reCAPTCHA token provided');
+      // In production, you might want to require reCAPTCHA
+      // return res.status(400).json({ message: 'reCAPTCHA verification required' });
     }
 
     if (password.length < 6) {
@@ -96,11 +110,24 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     console.log('🔐 Login attempt:', { email: req.body?.email });
-    const { email, password } = req.body || {};
+    const { email, password, recaptchaToken } = req.body || {};
 
     if (!email || !password) {
       console.log('❌ Missing email or password');
       return res.status(400).json({ message: 'email and password are required' });
+    }
+
+    // Verify reCAPTCHA
+    if (recaptchaToken) {
+      const isRecaptchaValid = await verifyRecaptcha(recaptchaToken);
+      if (!isRecaptchaValid) {
+        console.log('❌ reCAPTCHA verification failed');
+        return res.status(400).json({ message: 'reCAPTCHA verification failed. Please try again.' });
+      }
+    } else {
+      console.log('⚠️  No reCAPTCHA token provided');
+      // In production, you might want to require reCAPTCHA
+      // return res.status(400).json({ message: 'reCAPTCHA verification required' });
     }
 
     console.log('🔍 Looking for user with email:', email);

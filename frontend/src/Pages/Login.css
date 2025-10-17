@@ -179,6 +179,31 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.recaptcha-container {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+  transform-origin: center;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+.recaptcha-container > div {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  pointer-events: auto;
+  position: relative;
+  z-index: 100;
+}
+
+.recaptcha-container iframe {
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 100;
+}
+
 .login-container button[type="submit"] {
   width: 100%;
   padding: 1.3rem;

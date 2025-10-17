@@ -137,13 +137,26 @@ class HuggingFaceService {
    */
   async predictIntent(text, workspaceId) {
     try {
+      console.log(`🔍 Predicting intent for workspace: ${workspaceId}`);
+      console.log(`📝 Input text: "${text?.substring(0, 100)}..."`);
+      
       let modelInfo = this.getModelInfo(workspaceId);
       
       if (!modelInfo) {
-        throw new Error(`No trained model found for workspace: ${workspaceId}`);
+        // List available workspace IDs for debugging
+        const availableIds = Array.from(this.trainedModels.keys());
+        console.error(`❌ No trained model found for workspace: ${workspaceId}`);
+        console.error(`📋 Available workspace IDs (${availableIds.length}):`, availableIds);
+        
+        throw new Error(
+          `No trained model found for workspace "${workspaceId}". ` +
+          `Please train a model first. Available workspaces: ${availableIds.length > 0 ? availableIds.join(', ') : 'none'}`
+        );
       }
 
-      console.log(`🔍 Predicting intent for: "${text}"`);
+      console.log(`✅ Found model: ${modelInfo.id}`);
+      console.log(`📊 Model has ${modelInfo.trainingData?.length || 0} training examples`);
+      console.log(`🎯 Supports ${modelInfo.intents?.length || 0} intents: ${(modelInfo.intents || []).slice(0, 5).join(', ')}...`);
 
       // Simple rule-based classification (replace with actual ML model)
       const prediction = this.classifyText(text, modelInfo.trainingData);
@@ -185,7 +198,7 @@ class HuggingFaceService {
 
     } catch (error) {
       console.error('❌ Intent prediction failed:', error.message);
-      throw new Error(`Prediction failed: ${error.message}`);
+      throw error; // Re-throw to let the route handler send it to frontend
     }
   }
 
